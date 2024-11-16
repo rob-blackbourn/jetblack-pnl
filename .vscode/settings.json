@@ -1,0 +1,100 @@
+{
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "gitlens.codeLens.symbolScopes": [
+            "!Module"
+        ],
+        "editor.formatOnSave": true,
+        "editor.wordBasedSuggestions": "off",
+        "editor.rulers": [80],
+        "editor.tabSize": 4
+    },
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "editor.unicodeHighlight.invisibleCharacters": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        },
+        "cSpell.fixSpellingWithRenameProvider": true,
+        "cSpell.advanced.feature.useReferenceProviderWithRename": true,
+        "cSpell.advanced.feature.useReferenceProviderRemove": "/^#+\\s/",
+        "editor.rulers": [80]
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+    },
+    "[json]": {
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+    },
+    "cSpell.words": [
+        "Adesi",
+        "autopep",
+        "bcdf",
+        "Bjerksund",
+        "CBND",
+        "CNDEV",
+        "ddelta",
+        "deltap",
+        "dgamma",
+        "dgammap",
+        "driftless",
+        "dspot",
+        "dtime",
+        "dvega",
+        "dvegap",
+        "dvol",
+        "dvomma",
+        "dzeta",
+        "fontsource",
+        "gammap",
+        "Garman",
+        "Haug",
+        "infty",
+        "ivol",
+        "Kohlhagen",
+        "Kolhagen",
+        "Kolhhagen",
+        "Leisen",
+        "linted",
+        "Margrabe",
+        "micropip",
+        "mypy",
+        "ndarray",
+        "numpy",
+        "prob",
+        "pyimport",
+        "pylint",
+        "pyodide",
+        "Reimer",
+        "rubenstein",
+        "scipy",
+        "Stensland",
+        "ultima",
+        "vanna",
+        "varphi",
+        "vegap",
+        "vomma",
+        "Wakeman",
+        "Zomma"
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "svg.preview.background": "transparent"
+}
