@@ -2,7 +2,7 @@
 
 Some experiments in calculating trading P&L.
 
-## Example
+## Simple Example
 
 ```python
 from jetblack_pnl.core.example import SimplePnl
@@ -30,3 +30,47 @@ assert pnl.strip(105) == (9, 104, 105, 27, 9)
 pnl = book.add_trade('AAPL', -9, 107, 'tech')
 assert pnl.strip(107) == (0, 0, 107, 54, 0)
 ```
+
+## Overview
+
+A position consists of a number of buy or sell trades. When the
+position becomes flat (the quantity of buys equals the quantity of sells) there is
+an unambiguous result for the p/l (the amount spent minus the amount received).
+Up until this point the p/l depends on the accounting method.
+
+A obvious approach is to keep track of the average cost. Each trade is consolidated
+into a single trade where the price is the average cost. This is usually *not*
+what is done! In the investment world "opening" trades are matched against
+the "closing" trades.
+
+Typically, accountants prefer a FIFO (first in, first out) style of matching.
+So if there were a bunch of buys and then a sell, the sell would be matched with
+the earliest buy.
+
+FIFO is used by convention. It's origin may be in standard accounting, where old
+stock might have been cheaper to acquire, and matching new sales against old
+purchases ensured the P&L was not skewed by old inventory. It is not the only
+methodology however. Traders sometimes prefer a "worst price" approach, were a
+sell is matched against the highest price buy.
+
+Regardless of the approach the p/l can be characterized by the following
+properties:
+
+* quantity - how much of the asset is held.
+* cost - how much has it cost to accrue the asset.
+* realized - how much profit (or loss) was realized by selling from a long
+  position, or buying from a short.
+* unmatched - trades which have not yet been completely matched.
+
+If the new trade extends the position (a buy from a long or flat position or a
+sell from a flat or short position) the quantity increases by that of the trade
+and also the cost.
+
+If the trade reduces the position a matching trade must be found. Taking FIFO
+as the method, the oldest trade is taken. There are three possibilities: The
+matching trade might be exactly the same quantity (but of opposite sign), the
+trade might have the larger quantity, or the match might have the larger quantity.
+Where the quantities don't match exactly there must be a split. If the match
+quantity is greater, the match is split and the spare is returned to the unmatched.
+If the trade is larger it is split and the remainder becomes the next trade to
+match.
