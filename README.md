@@ -65,11 +65,11 @@ properties:
 
 If the new trade extends the position (a buy from a long or flat position or a
 sell from a flat or short position) the quantity increases by that of the trade
-and also the cost.
+and also the cost. This will be called an *opening* trade.
 
-If the trade reduces the position a matching trade must be found. Taking FIFO
-as the method, the oldest trade is taken. There are three possibilities: The
-matching trade might be exactly the same quantity (but of opposite sign), the
+If the trade reduces the position (a *closing* trade) a matching trade must be
+found. Taking FIFO as the method, the oldest trade is taken. There are three
+possibilities: The matching trade might be exactly the same quantity (but of opposite sign), the
 trade might have the larger quantity, or the match might have the larger quantity.
 Where the quantities don't match exactly there must be a split. If the match
 quantity is greater, the match is split and the spare is returned to the unmatched.
