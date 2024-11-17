@@ -49,7 +49,7 @@ with the earliest buy, and then the more recent trades, until the sell quantity
 matched the buys.
 
 FIFO is used by convention. It's origin may be in standard accounting, where old
-stock might have been cheaper to acquire, and matching new sales against old
+stock would likely have been cheaper to acquire, and matching new sales against old
 purchases ensured the P&L was not skewed by old inventory. It is not the only
 methodology however. Traders sometimes prefer a "worst price" approach, were a
 sell is matched against the highest price buy.
