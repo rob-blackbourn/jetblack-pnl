@@ -35,8 +35,8 @@ assert pnl.strip(107) == (0, 0, 107, 54, 0)
 
 A position consists of a number of buy or sell trades. When the
 position becomes flat (the quantity of buys equals the quantity of sells) there is
-an unambiguous result for the p/l (the amount spent minus the amount received).
-Up until this point the p/l depends on the accounting method.
+an unambiguous result for the P&L (the amount spent minus the amount received).
+Up until this point the P&L depends on the accounting method.
 
 A obvious approach is to keep track of the average cost. Each trade is consolidated
 into a single trade where the price is the average cost. This is usually *not*
@@ -53,7 +53,7 @@ purchases ensured the P&L was not skewed by old inventory. It is not the only
 methodology however. Traders sometimes prefer a "worst price" approach, were a
 sell is matched against the highest price buy.
 
-Regardless of the approach the p/l can be characterized by the following
+Regardless of the approach the P&L can be characterized by the following
 properties:
 
 * quantity - how much of the asset is held.
