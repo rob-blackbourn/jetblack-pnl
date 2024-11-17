@@ -44,8 +44,9 @@ what is done! In the investment world "opening" trades are matched against
 the "closing" trades.
 
 Typically, accountants prefer a FIFO (first in, first out) style of matching.
-So if there were a bunch of buys and then a sell, the sell would be matched with
-the earliest buy.
+So if there were a bunch of buys and then a sell, the sell would be matched first
+with the earliest buy, and then the more recent trades, until the sell quantity
+matched the buys.
 
 FIFO is used by convention. It's origin may be in standard accounting, where old
 stock might have been cheaper to acquire, and matching new sales against old
