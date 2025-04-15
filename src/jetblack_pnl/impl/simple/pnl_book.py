@@ -13,6 +13,7 @@ from ...core.types import (
 
 
 from .trade import Trade
+from .types import ISecurity
 
 
 class PnlBook:
@@ -31,12 +32,12 @@ class PnlBook:
 
     def add_trade(
         self,
-        ticker: str,
+        security: ISecurity,
         book: str,
         quantity: int | Decimal | str,
         price: int | Decimal | str,
     ) -> TradingPnl:
-        key = (ticker, book)
+        key = (security.key, book)
         if key in self._cache:
             pnl, unmatched, matched = self._cache[key]
         else:
