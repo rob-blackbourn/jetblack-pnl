@@ -2,6 +2,9 @@
 
 from .types import (
     SplitTrade,
+    TBookKey,
+    IBook,
+    TSecurityKey,
     ISecurity,
     ITrade,
     TradingPnl,
@@ -11,6 +14,9 @@ from .types import (
 from .algorithm import add_trade
 
 __all__ = [
+    'TBookKey',
+    'IBook',
+    'TSecurityKey',
     'ISecurity',
     'ITrade',
     'TradingPnl',

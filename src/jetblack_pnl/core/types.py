@@ -20,6 +20,17 @@ class ISecurity(Protocol[TSecurityKey]):
         """The contract size for the security"""
 
 
+TBookKey = TypeVar('TBookKey', covariant=True)
+
+
+class IBook(Protocol[TBookKey]):
+    """A book interface"""
+
+    @property
+    def key(self) -> TBookKey:
+        """The key for the book"""
+
+
 @runtime_checkable
 class ITrade(Protocol):
 
