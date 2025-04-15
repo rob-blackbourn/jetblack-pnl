@@ -9,7 +9,7 @@ from sqlite3 import Connection
 
 from ...core import TradingPnl, add_trade
 
-from .market_trade import MarketTrade
+from .trade import Trade
 from .pools import MatchedPool, UnmatchedPool
 from .tables import create_tables, drop_tables
 from .pnl import save_pnl, select_pnl, ensure_pnl
@@ -41,7 +41,7 @@ class TradeDb:
             unmatched = UnmatchedPool.Fifo(cur, ticker, book)
             pnl = select_pnl(cur, ticker, book, timestamp)
 
-            trade = MarketTrade.create(
+            trade = Trade.create(
                 cur,
                 timestamp,
                 ticker,

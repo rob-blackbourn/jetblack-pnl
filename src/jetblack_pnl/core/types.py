@@ -7,7 +7,7 @@ from typing import NamedTuple, Protocol, runtime_checkable
 
 
 @runtime_checkable
-class IMarketTrade(Protocol):
+class ITrade(Protocol):
 
     @property
     @abstractmethod
@@ -20,30 +20,30 @@ class IMarketTrade(Protocol):
         ...
 
 
-class PnlTrade(NamedTuple):
+class SplitTrade(NamedTuple):
     quantity: Decimal
-    trade: IMarketTrade
+    trade: ITrade
 
 
 class IUnmatchedPool(Protocol):
 
     @abstractmethod
-    def push(self, opening: PnlTrade) -> None:
+    def push(self, opening: SplitTrade) -> None:
         ...
 
     @abstractmethod
-    def pop(self, closing: PnlTrade) -> PnlTrade:
+    def pop(self, closing: SplitTrade) -> SplitTrade:
         ...
 
     @abstractmethod
-    def has(self, closing: PnlTrade) -> bool:
+    def has(self, closing: SplitTrade) -> bool:
         ...
 
 
 class IMatchedPool(Protocol):
 
     @abstractmethod
-    def push(self, opening: PnlTrade, closing: PnlTrade) -> None:
+    def push(self, opening: SplitTrade, closing: SplitTrade) -> None:
         ...
 
 

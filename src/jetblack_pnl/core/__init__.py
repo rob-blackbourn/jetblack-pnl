@@ -1,8 +1,8 @@
 """Core P/L"""
 
 from .types import (
-    PnlTrade,
-    IMarketTrade,
+    SplitTrade,
+    ITrade,
     TradingPnl,
     IMatchedPool,
     IUnmatchedPool
@@ -10,9 +10,9 @@ from .types import (
 from .algorithm import add_trade
 
 __all__ = [
-    'IMarketTrade',
+    'ITrade',
     'TradingPnl',
-    'PnlTrade',
+    'SplitTrade',
     'IMatchedPool',
     'IUnmatchedPool',
     'add_trade'

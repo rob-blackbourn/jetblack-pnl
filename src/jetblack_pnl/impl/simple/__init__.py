@@ -2,12 +2,12 @@
 
 from .matched_pool import MatchedPool
 from .pnl import SimplePnl
-from .trade import MarketTrade
+from .trade import Trade
 from .unmatched_pools import UnmatchedPool
 
 __all__ = [
     "SimplePnl",
-    "MarketTrade",
+    "Trade",
     "MatchedPool",
     "UnmatchedPool",
 ]

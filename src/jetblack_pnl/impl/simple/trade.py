@@ -2,10 +2,10 @@
 
 from decimal import Decimal
 
-from ...core.types import IMarketTrade
+from ...core.types import ITrade
 
 
-class MarketTrade(IMarketTrade):
+class Trade(ITrade):
     """A simple trade"""
 
     def __init__(self, quantity: Decimal | int, price: Decimal | int) -> None:
@@ -22,7 +22,7 @@ class MarketTrade(IMarketTrade):
 
     def __eq__(self, value: object) -> bool:
         return (
-            isinstance(value, MarketTrade) and
+            isinstance(value, Trade) and
             value.quantity == self.quantity and
             value.price == self.price
         )

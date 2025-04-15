@@ -8,10 +8,10 @@ from typing import Optional
 
 from sqlite3 import Cursor
 
-from ...core import IMarketTrade
+from ...core import ITrade
 
 
-class MarketTrade(IMarketTrade):
+class Trade(ITrade):
 
     def __init__(
         self,
@@ -57,7 +57,7 @@ class MarketTrade(IMarketTrade):
         return f"[{self.trade_id}: {self.timestamp.isoformat()}] {self.quantity} {self.ticker} @ {self.price} in {self.book}"
 
     @classmethod
-    def read(cls, cur: Cursor, trade_id: int) -> Optional[MarketTrade]:
+    def read(cls, cur: Cursor, trade_id: int) -> Optional[Trade]:
         cur.execute(
             """
             SELECT
@@ -77,7 +77,7 @@ class MarketTrade(IMarketTrade):
         if row is None:
             return None
         (timestamp, ticker, quantity, price, book) = row
-        return MarketTrade(trade_id, timestamp, ticker, quantity, price, book)
+        return Trade(trade_id, timestamp, ticker, quantity, price, book)
 
     @classmethod
     def create(
@@ -88,7 +88,7 @@ class MarketTrade(IMarketTrade):
         quantity: Decimal,
         price: Decimal,
         book: str
-    ) -> MarketTrade:
+    ) -> Trade:
         cur.execute(
             """
             INSERT INTO trade(timestamp, ticker, quantity, price, book)
@@ -98,7 +98,7 @@ class MarketTrade(IMarketTrade):
         )
         trade_id = cur.lastrowid
         assert (trade_id is not None)
-        trade = MarketTrade(
+        trade = Trade(
             trade_id,
             timestamp,
             ticker,

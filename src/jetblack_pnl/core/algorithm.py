@@ -35,12 +35,12 @@ If the trade is larger it is split and the remainder becomes the next trade to
 match.
 """
 
-from .types import IMarketTrade, PnlTrade, IUnmatchedPool, IMatchedPool, TradingPnl
+from .types import ITrade, SplitTrade, IUnmatchedPool, IMatchedPool, TradingPnl
 
 
 def _extend_position(
         pnl: TradingPnl,
-        trade: PnlTrade,
+        trade: SplitTrade,
         unmatched: IUnmatchedPool
 ) -> TradingPnl:
     """Extend a position.
@@ -73,9 +73,9 @@ def _extend_position(
 
 
 def _find_opening_trade(
-        closing_trade: PnlTrade,
+        closing_trade: SplitTrade,
         unmatched: IUnmatchedPool
-) -> tuple[PnlTrade, PnlTrade, PnlTrade | None]:
+) -> tuple[SplitTrade, SplitTrade, SplitTrade | None]:
     # Select an opening trade.
     opening_trade = unmatched.pop(closing_trade)
 
@@ -86,11 +86,11 @@ def _find_opening_trade(
         # trade, and a second with the unmatched quantity.
 
         matched_opening_trade = opening_trade
-        matched_closing_trade = PnlTrade(
+        matched_closing_trade = SplitTrade(
             -opening_trade.quantity,
             closing_trade.trade,
         )
-        unmatched_closing_trade = PnlTrade(
+        unmatched_closing_trade = SplitTrade(
             closing_trade.quantity - -opening_trade.quantity,
             closing_trade.trade,
         )
@@ -102,12 +102,12 @@ def _find_opening_trade(
         # trade, and the second with the unmatched quantity. Return the unmatched
         # opening trade to the pool.
 
-        matched_opening_trade = PnlTrade(
+        matched_opening_trade = SplitTrade(
             -closing_trade.quantity,
             opening_trade.trade,
         )
         matched_closing_trade = closing_trade
-        unmatched_opening_trade = PnlTrade(
+        unmatched_opening_trade = SplitTrade(
             opening_trade.quantity + closing_trade.quantity,
             opening_trade.trade,
         )
@@ -128,10 +128,10 @@ def _find_opening_trade(
 
 def _match(
         pnl: TradingPnl,
-        closing_trade: PnlTrade,
+        closing_trade: SplitTrade,
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
-) -> tuple[PnlTrade | None, TradingPnl]:
+) -> tuple[SplitTrade | None, TradingPnl]:
     closing_trade, opening_trade, unmatched_opening_trade = _find_opening_trade(
         closing_trade,
         unmatched
@@ -154,7 +154,7 @@ def _match(
 
 def _reduce_position(
         pnl: TradingPnl,
-        closing: PnlTrade | None,
+        closing: SplitTrade | None,
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
@@ -179,7 +179,7 @@ def _reduce_position(
 
 def _add_pnl_trade(
         pnl: TradingPnl,
-        trade: PnlTrade,
+        trade: SplitTrade,
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
@@ -207,13 +207,13 @@ def _add_pnl_trade(
 
 def add_trade(
         pnl: TradingPnl,
-        market_trade: IMarketTrade,
+        trade: ITrade,
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
     return _add_pnl_trade(
         pnl,
-        PnlTrade(market_trade.quantity, market_trade),
+        SplitTrade(trade.quantity, trade),
         unmatched,
         matched
     )

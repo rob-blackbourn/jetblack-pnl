@@ -3,16 +3,16 @@
 from typing import Sequence
 
 
-from ...core.types import PnlTrade, IMatchedPool
+from ...core.types import SplitTrade, IMatchedPool
 
 
 class MatchedPool(IMatchedPool):
     """Simple pool of matched trades"""
 
-    def __init__(self, pool: Sequence[tuple[PnlTrade, PnlTrade]] = ()) -> None:
+    def __init__(self, pool: Sequence[tuple[SplitTrade, SplitTrade]] = ()) -> None:
         self._pool = pool
 
-    def push(self, opening: PnlTrade, closing: PnlTrade) -> None:
+    def push(self, opening: SplitTrade, closing: SplitTrade) -> None:
         matched_trade = (opening, closing)
         self._pool = tuple((*self._pool, matched_trade))
 

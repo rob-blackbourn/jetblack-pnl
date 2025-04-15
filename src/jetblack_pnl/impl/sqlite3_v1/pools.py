@@ -6,12 +6,12 @@ from sqlite3 import Cursor
 from typing import cast
 
 from ...core import (
-    PnlTrade,
+    SplitTrade,
     IMatchedPool,
     IUnmatchedPool,
 )
 
-from .market_trade import MarketTrade
+from .trade import Trade
 from .pnl import MAX_VALID_TO
 
 
@@ -22,7 +22,7 @@ class MatchedPool(IMatchedPool):
         self._ticker = ticker
         self._book = book
 
-    def push(self, opening: PnlTrade, closing: PnlTrade) -> None:
+    def push(self, opening: SplitTrade, closing: SplitTrade) -> None:
         self._cur.execute(
             """
             INSERT INTO matched_trade(
@@ -38,9 +38,9 @@ class MatchedPool(IMatchedPool):
             )
             """,
             (
-                cast(MarketTrade, opening.trade).trade_id,
-                cast(MarketTrade, closing.trade).trade_id,
-                cast(MarketTrade, closing.trade).timestamp,
+                cast(Trade, opening.trade).trade_id,
+                cast(Trade, closing.trade).trade_id,
+                cast(Trade, closing.trade).timestamp,
                 MAX_VALID_TO
             )
         )
@@ -55,8 +55,8 @@ class UnmatchedPool:
             self._ticker = ticker
             self._book = book
 
-        def push(self, opening: PnlTrade) -> None:
-            market_trade = cast(MarketTrade, opening.trade)
+        def push(self, opening: SplitTrade) -> None:
+            market_trade = cast(Trade, opening.trade)
 
             self._cur.execute(
                 """
@@ -80,9 +80,9 @@ class UnmatchedPool:
                 )
             )
 
-        def pop(self, closing: PnlTrade) -> PnlTrade:
+        def pop(self, closing: SplitTrade) -> SplitTrade:
             # Find the oldest unmatched trade that is in the valid window.
-            timestamp = cast(MarketTrade, closing.trade).timestamp
+            timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
                 """
                 SELECT
@@ -138,14 +138,14 @@ class UnmatchedPool:
                     MAX_VALID_TO
                 )
             )
-            market_trade = MarketTrade.read(self._cur, trade_id)
+            market_trade = Trade.read(self._cur, trade_id)
             if market_trade is None:
                 raise RuntimeError("unable to find market trade")
-            pnl_trade = PnlTrade(quantity, market_trade)
+            pnl_trade = SplitTrade(quantity, market_trade)
             return pnl_trade
 
-        def has(self, closing: PnlTrade) -> bool:
-            timestamp = cast(MarketTrade, closing.trade).timestamp
+        def has(self, closing: SplitTrade) -> bool:
+            timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
                 """
                 SELECT

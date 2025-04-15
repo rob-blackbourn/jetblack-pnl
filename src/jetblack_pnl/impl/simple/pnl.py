@@ -15,7 +15,7 @@ from ...core.types import (
 from .utils import to_decimal
 from .unmatched_pools import UnmatchedPool
 from .matched_pool import MatchedPool
-from .trade import MarketTrade
+from .trade import Trade
 
 
 class SimplePnl:
@@ -45,7 +45,7 @@ class SimplePnl:
             unmatched = self._unmatched()
             matched = MatchedPool()
 
-        trade = MarketTrade(
+        trade = Trade(
             to_decimal(quantity),
             to_decimal(price),
         )
