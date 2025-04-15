@@ -12,7 +12,6 @@ from ...core.types import (
 )
 
 
-from .utils import to_decimal
 from .unmatched_pools import UnmatchedPool
 from .matched_pool import MatchedPool
 from .trade import Trade
@@ -33,9 +32,9 @@ class PnlBook:
     def add_trade(
         self,
         ticker: str,
+        book: str,
         quantity: int | Decimal | str,
         price: int | Decimal | str,
-        book: str
     ) -> TradingPnl:
         key = (ticker, book)
         if key in self._cache:
