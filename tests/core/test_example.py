@@ -1,9 +1,11 @@
 """Tests for the simple implementation"""
 
-from jetblack_pnl.core.example import SimplePnl
+from jetblack_pnl.impl.simple import SimplePnl
 
 
-def test_fifo():
+def test_fifo() -> None:
+    """Test the FIFO implementation of the SimplePnl class."""
+
     book = SimplePnl()
 
     # Buy 6 @ 100

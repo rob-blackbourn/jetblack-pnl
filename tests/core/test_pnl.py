@@ -3,7 +3,7 @@
 from decimal import Decimal
 
 from jetblack_pnl.core import TradingPnl, PnlTrade, add_trade
-from jetblack_pnl.core.example import (
+from jetblack_pnl.impl.simple import (
     MarketTrade,
     MatchedPool,
     UnmatchedPool,
