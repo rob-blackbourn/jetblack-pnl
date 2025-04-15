@@ -1,7 +1,7 @@
 """A simple implementation of a PnL book"""
 
 from decimal import Decimal
-from typing import Type
+from typing import Callable
 
 from ...core.algorithm import add_trade
 
@@ -19,8 +19,8 @@ class PnlBook:
 
     def __init__(
             self,
-            matched_factory: Type[IMatchedPool],
-            unmatched_factory: Type[IUnmatchedPool]
+            matched_factory: Callable[[], IMatchedPool],
+            unmatched_factory: Callable[[], IUnmatchedPool]
     ) -> None:
         self._matched_factory = matched_factory
         self._unmatched_factory = unmatched_factory
