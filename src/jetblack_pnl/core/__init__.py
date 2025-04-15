@@ -2,6 +2,7 @@
 
 from .types import (
     SplitTrade,
+    ISecurity,
     ITrade,
     TradingPnl,
     IMatchedPool,
@@ -10,6 +11,7 @@ from .types import (
 from .algorithm import add_trade
 
 __all__ = [
+    'ISecurity',
     'ITrade',
     'TradingPnl',
     'SplitTrade',

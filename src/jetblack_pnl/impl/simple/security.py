@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from .types import ISecurity
+from ...core import ISecurity
 from .utils import to_decimal
 
 

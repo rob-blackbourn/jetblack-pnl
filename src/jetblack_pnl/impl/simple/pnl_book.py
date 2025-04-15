@@ -6,6 +6,7 @@ from typing import Callable
 from ...core.algorithm import add_trade
 
 from ...core.types import (
+    ISecurity,
     TradingPnl,
     IMatchedPool,
     IUnmatchedPool
@@ -13,7 +14,6 @@ from ...core.types import (
 
 
 from .trade import Trade
-from .types import ISecurity
 
 
 class PnlBook:

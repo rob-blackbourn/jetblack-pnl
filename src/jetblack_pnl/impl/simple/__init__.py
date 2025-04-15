@@ -8,6 +8,7 @@ from .unmatched_pools import UnmatchedPool
 
 __all__ = [
     "PnlBook",
+    "Security",
     "Trade",
     "MatchedPool",
     "UnmatchedPool",

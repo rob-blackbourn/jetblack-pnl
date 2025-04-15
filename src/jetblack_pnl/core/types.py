@@ -3,7 +3,21 @@
 
 from abc import abstractmethod
 from decimal import Decimal
-from typing import NamedTuple, Protocol, runtime_checkable
+from typing import NamedTuple, Protocol, TypeVar, runtime_checkable
+
+TSecurityKey = TypeVar('TSecurityKey', covariant=True)
+
+
+class ISecurity(Protocol[TSecurityKey]):
+    """A security interface"""
+
+    @property
+    def key(self) -> TSecurityKey:
+        """The key for the security"""
+
+    @property
+    def contract_size(self) -> Decimal:
+        """The contract size for the security"""
 
 
 @runtime_checkable
