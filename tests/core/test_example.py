@@ -1,12 +1,12 @@
 """Tests for the simple implementation"""
 
-from jetblack_pnl.impl.simple import PnlBook
+from jetblack_pnl.impl.simple import PnlBook, MatchedPool, UnmatchedPool
 
 
 def test_fifo() -> None:
     """Test the FIFO implementation of the SimplePnl class."""
 
-    book = PnlBook()
+    book = PnlBook(MatchedPool, UnmatchedPool.Fifo)
 
     # Buy 6 @ 100
     pnl = book.add_trade('AAPL', 'tech', 6, 100)

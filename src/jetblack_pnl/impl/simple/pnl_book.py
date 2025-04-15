@@ -12,8 +12,6 @@ from ...core.types import (
 )
 
 
-from .unmatched_pools import UnmatchedPool
-from .matched_pool import MatchedPool
 from .trade import Trade
 
 
@@ -21,9 +19,11 @@ class PnlBook:
 
     def __init__(
             self,
-            unmatched: Type[IUnmatchedPool] = UnmatchedPool.Fifo
+            matched_factory: Type[IMatchedPool],
+            unmatched_factory: Type[IUnmatchedPool]
     ) -> None:
-        self._unmatched = unmatched
+        self._matched_factory = matched_factory
+        self._unmatched_factory = unmatched_factory
         self._cache: dict[
             tuple[str, str],
             tuple[TradingPnl, IUnmatchedPool, IMatchedPool]
@@ -41,8 +41,8 @@ class PnlBook:
             pnl, unmatched, matched = self._cache[key]
         else:
             pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
-            unmatched = self._unmatched()
-            matched = MatchedPool()
+            unmatched = self._unmatched_factory()
+            matched = self._matched_factory()
 
         trade = Trade(quantity, price)
         pnl = add_trade(pnl, trade, unmatched, matched)
