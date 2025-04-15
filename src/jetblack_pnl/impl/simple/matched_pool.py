@@ -1,4 +1,4 @@
-"""A simple implementation for demonstrating and testing the P&L algorithm"""
+"""A simple implementation of a matched pool"""
 
 from typing import Sequence
 

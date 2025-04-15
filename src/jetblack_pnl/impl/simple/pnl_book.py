@@ -1,4 +1,4 @@
-"""A simple implementation for demonstrating and testing the P&L algorithm"""
+"""A simple implementation of a PnL book"""
 
 from decimal import Decimal
 from typing import Type
@@ -18,7 +18,7 @@ from .matched_pool import MatchedPool
 from .trade import Trade
 
 
-class SimplePnl:
+class PnlBook:
 
     def __init__(
             self,
@@ -33,8 +33,8 @@ class SimplePnl:
     def add_trade(
         self,
         ticker: str,
-        quantity: int | Decimal,
-        price: int | Decimal,
+        quantity: int | Decimal | str,
+        price: int | Decimal | str,
         book: str
     ) -> TradingPnl:
         key = (ticker, book)
@@ -45,10 +45,7 @@ class SimplePnl:
             unmatched = self._unmatched()
             matched = MatchedPool()
 
-        trade = Trade(
-            to_decimal(quantity),
-            to_decimal(price),
-        )
+        trade = Trade(quantity, price)
         pnl = add_trade(pnl, trade, unmatched, matched)
         self._cache[key] = (pnl, unmatched, matched)
         return pnl

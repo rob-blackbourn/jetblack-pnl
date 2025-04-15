@@ -1,16 +1,22 @@
-"""A simple implementation for demonstrating and testing the P&L algorithm"""
+"""A simple trade implementation"""
 
 from decimal import Decimal
 
 from ...core.types import ITrade
 
+from .utils import to_decimal
+
 
 class Trade(ITrade):
     """A simple trade"""
 
-    def __init__(self, quantity: Decimal | int, price: Decimal | int) -> None:
-        self._quantity = Decimal(quantity)
-        self._price = Decimal(price)
+    def __init__(
+            self,
+            quantity: Decimal | int | str,
+            price: Decimal | int | str
+    ) -> None:
+        self._quantity = to_decimal(quantity)
+        self._price = to_decimal(price)
 
     @property
     def quantity(self) -> Decimal:
