@@ -1,4 +1,4 @@
-"""jetblack_pnl.core"""
+"""Core P/L"""
 
 from .types import (
     PnlTrade,
