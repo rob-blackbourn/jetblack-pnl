@@ -81,11 +81,19 @@ class SplitTrade(Generic[TTradeData]):
             value.trade == self.trade
         )
 
+    def __repr__(self) -> str:
+        return f"{self.quantity=} <{self.trade=}>"
+
 
 class IUnmatchedPool(Protocol[TTradeData]):
+    """A pool of unmatched trades"""
 
     @abstractmethod
-    def push(self, opening: SplitTrade[TTradeData]) -> None:
+    def append(self, opening: SplitTrade[TTradeData]) -> None:
+        ...
+
+    @abstractmethod
+    def insert(self, opening: SplitTrade[TTradeData]) -> None:
         ...
 
     @abstractmethod
@@ -100,7 +108,7 @@ class IUnmatchedPool(Protocol[TTradeData]):
 class IMatchedPool(Protocol[TTradeData]):
 
     @abstractmethod
-    def push(
+    def append(
         self,
         opening: SplitTrade[TTradeData],
         closing: SplitTrade[TTradeData]

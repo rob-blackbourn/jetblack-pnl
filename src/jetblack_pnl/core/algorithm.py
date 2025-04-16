@@ -76,7 +76,7 @@ def _extend_position(
     """
     quantity = pnl.quantity + trd.quantity
     cost = pnl.cost - trd.quantity * sec.contract_size * trd.trade.price
-    unmatched.push(trd)
+    unmatched.append(trd)
 
     return TradingPnl(
         quantity,
@@ -124,7 +124,7 @@ def _find_opening_trade(
             opening_trade.quantity + closing_trade.quantity,
             opening_trade.trade,
         )
-        unmatched.push(unmatched_opening_trade)
+        unmatched.insert(unmatched_opening_trade)
 
         # As the entire closing trade has been filled there is no unmatched.
         unmatched_closing_trade = None
@@ -151,7 +151,7 @@ def _match(
         unmatched
     )
 
-    matched.push(opening_trade, closing_trade)
+    matched.append(opening_trade, closing_trade)
 
     # Note that the open will have the opposite sign to the close.
     close_value = (

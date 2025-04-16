@@ -22,7 +22,7 @@ class MatchedPool(IMatchedPool):
         self._ticker = ticker
         self._book = book
 
-    def push(self, opening: SplitTrade, closing: SplitTrade) -> None:
+    def append(self, opening: SplitTrade, closing: SplitTrade) -> None:
         self._cur.execute(
             """
             INSERT INTO matched_trade(
@@ -55,7 +55,7 @@ class UnmatchedPool:
             self._ticker = ticker
             self._book = book
 
-        def push(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade) -> None:
             market_trade = cast(Trade, opening.trade)
 
             self._cur.execute(

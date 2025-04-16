@@ -12,8 +12,11 @@ class UnmatchedPool:
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def push(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade) -> None:
             self._pool = tuple((*self._pool, opening))
+
+        def insert(self, opening: SplitTrade) -> None:
+            self._pool = tuple((opening, *self._pool))
 
         def pop(self, _closing: SplitTrade) -> SplitTrade:
             trade, self._pool = (self._pool[0], self._pool[1:])
@@ -39,8 +42,11 @@ class UnmatchedPool:
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def push(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade) -> None:
             self._pool = tuple((*self._pool, opening))
+
+        def insert(self, opening: SplitTrade) -> None:
+            self._pool = tuple((opening, *self._pool))
 
         def pop(self, _closing: SplitTrade) -> SplitTrade:
             trade, self._pool = (self._pool[-1], self._pool[:-1])
@@ -66,8 +72,11 @@ class UnmatchedPool:
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def push(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade) -> None:
             self._pool = tuple((*self._pool, opening))
+
+        def insert(self, opening: SplitTrade) -> None:
+            self._pool = tuple((opening, *self._pool))
 
         def pop(self, closing: SplitTrade) -> SplitTrade:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
@@ -98,8 +107,11 @@ class UnmatchedPool:
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def push(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade) -> None:
             self._pool = tuple((*self._pool, opening))
+
+        def insert(self, opening: SplitTrade) -> None:
+            self._pool = tuple((opening, *self._pool))
 
         def pop(self, closing: SplitTrade) -> SplitTrade:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)

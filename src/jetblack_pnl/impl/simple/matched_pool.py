@@ -12,7 +12,7 @@ class MatchedPool(IMatchedPool):
     def __init__(self, pool: Sequence[tuple[SplitTrade, SplitTrade]] = ()) -> None:
         self._pool = pool
 
-    def push(self, opening: SplitTrade, closing: SplitTrade) -> None:
+    def append(self, opening: SplitTrade, closing: SplitTrade) -> None:
         matched_trade = (opening, closing)
         self._pool = tuple((*self._pool, matched_trade))
 
