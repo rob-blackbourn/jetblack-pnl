@@ -12,6 +12,7 @@ from .types import (
     IUnmatchedPool
 )
 from .algorithm import add_trade
+from .pnl_book import PnlBook
 
 __all__ = [
     'TBookKey',
@@ -23,5 +24,6 @@ __all__ = [
     'SplitTrade',
     'IMatchedPool',
     'IUnmatchedPool',
-    'add_trade'
+    'add_trade',
+    'PnlBook'
 ]

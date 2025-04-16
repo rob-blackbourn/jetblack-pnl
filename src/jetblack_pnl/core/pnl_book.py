@@ -3,23 +3,22 @@
 from decimal import Decimal
 from typing import Callable, Generic
 
-from ...core.algorithm import add_trade
+from .algorithm import add_trade
 
-from ...core.types import (
+from .types import (
     TBookKey,
     IBook,
     TSecurityKey,
     ISecurity,
+    TTradeData,
+    ITrade,
     TradingPnl,
     IMatchedPool,
     IUnmatchedPool
 )
 
 
-from .trade import Trade
-
-
-class PnlBook(Generic[TSecurityKey, TBookKey]):
+class PnlBook(Generic[TSecurityKey, TBookKey, TTradeData]):
     """A simple implementation of a PnL book"""
 
     def __init__(
@@ -38,8 +37,7 @@ class PnlBook(Generic[TSecurityKey, TBookKey]):
         self,
         security: ISecurity[TSecurityKey],
         book: IBook[TBookKey],
-        quantity: int | Decimal | str,
-        price: int | Decimal | str,
+        trade: ITrade[TTradeData],
     ) -> TradingPnl:
         key = (security.key, book.key)
         if key in self._cache:
@@ -49,7 +47,6 @@ class PnlBook(Generic[TSecurityKey, TBookKey]):
             unmatched = self._unmatched_factory()
             matched = self._matched_factory()
 
-        trade = Trade(quantity, price)
         pnl = add_trade(pnl, trade, security, unmatched, matched)
         self._cache[key] = (pnl, unmatched, matched)
         return pnl
