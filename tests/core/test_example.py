@@ -14,7 +14,7 @@ def test_fifo() -> None:
 
     pnl_book = PnlBook[str, str](MatchedPool, UnmatchedPool.Fifo)
     tech = Book('tech')
-    apple = Security('AAPL', 1000)
+    apple = Security('AAPL', 1000, False)
 
     # Buy 6 @ 100
     pnl = pnl_book.add_trade(apple, tech, 6, 100)

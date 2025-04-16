@@ -14,7 +14,7 @@ from jetblack_pnl.impl.simple import (
 def test_long_to_short_with_splits_best_price():
     """long to short, splits, best price"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.BestPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -57,7 +57,7 @@ def test_long_to_short_with_splits_best_price():
 def test_long_to_short_with_splits_worst_price():
     """long to short, splits, worst price"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.WorstPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -90,7 +90,7 @@ def test_long_to_short_with_splits_worst_price():
 def test_long_to_short_with_splits_fifo():
     """long to short, splits, fifo"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -123,7 +123,7 @@ def test_long_to_short_with_splits_fifo():
 def test_long_to_short_with_splits_lifo():
     """long to short, splits, fifo"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Lifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -156,7 +156,7 @@ def test_long_to_short_with_splits_lifo():
 def test_long_to_short_fifo_with_profit():
     """Buy 1 @ 100, then sell 1 @ 102 making 2"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -179,7 +179,7 @@ def test_long_to_short_fifo_with_profit():
 def test_short_to_long_fifo_with_profit():
     """Sell 1 @ 102, then buy back 1 @ 101 making 2"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -201,7 +201,7 @@ def test_short_to_long_fifo_with_profit():
 def test_long_to_short_fifo_with_loss():
     """Buy 1 @ 102, then sell 1 @ 100 loosing 2"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -223,7 +223,7 @@ def test_long_to_short_fifo_with_loss():
 def test_short_to_long_fifo_with_loss():
     """Sell 1 @ 100, then buy back 1 @ 102 loosing 2"""
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -244,7 +244,7 @@ def test_short_to_long_fifo_with_loss():
 
 def test_long_sell_fifo_through_flat():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -267,7 +267,7 @@ def test_long_sell_fifo_through_flat():
 
 def test_short_buy_fifo_through_flat():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -290,7 +290,7 @@ def test_short_buy_fifo_through_flat():
 
 def test_one_buy_many_sells_fifo():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -319,7 +319,7 @@ def test_one_buy_many_sells_fifo():
 
 def test_pnl():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -352,7 +352,7 @@ def test_pnl():
 
 def test_many_buys_one_sell_fifo():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -389,7 +389,7 @@ def test_many_buys_one_sell_fifo():
 
 def test_many_buys_one_sell_lifo():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Lifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -426,7 +426,7 @@ def test_many_buys_one_sell_lifo():
 
 def test_many_buys_one_sell_best_price():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.BestPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -463,7 +463,7 @@ def test_many_buys_one_sell_best_price():
 
 def test_many_sells_one_buy_best_price():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.BestPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -503,7 +503,7 @@ def test_many_sells_one_buy_best_price():
 
 def test_many_buys_one_sell_worst_price():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.WorstPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -543,7 +543,7 @@ def test_many_buys_one_sell_worst_price():
 
 def test_many_sells_one_buy_worst_price():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.WorstPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
@@ -582,7 +582,7 @@ def test_many_sells_one_buy_worst_price():
 
 def test_fraction_quantities():
 
-    sec = Security("aapl", 1)
+    sec = Security("aapl", 1, False)
     matched = MatchedPool()
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))

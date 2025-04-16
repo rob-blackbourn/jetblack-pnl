@@ -35,9 +35,12 @@ If the trade is larger it is split and the remainder becomes the next trade to
 match.
 """
 
+from decimal import Decimal
+
 from .types import (
     TSecurityKey,
     ISecurity,
+    TTradeData,
     ITrade,
     SplitTrade,
     IUnmatchedPool,
@@ -48,9 +51,9 @@ from .types import (
 
 def _extend_position(
         pnl: TradingPnl,
-        trd: SplitTrade,
+        trd: SplitTrade[TTradeData],
         sec: ISecurity[TSecurityKey],
-        unmatched: IUnmatchedPool
+        unmatched: IUnmatchedPool[TTradeData]
 ) -> TradingPnl:
     """Extend a position.
 
@@ -83,8 +86,8 @@ def _extend_position(
 
 
 def _find_opening_trade(
-        closing_trade: SplitTrade,
-        unmatched: IUnmatchedPool
+        closing_trade: SplitTrade[TTradeData],
+        unmatched: IUnmatchedPool[TTradeData]
 ) -> tuple[SplitTrade, SplitTrade, SplitTrade | None]:
     # Select an opening trade.
     opening_trade = unmatched.pop(closing_trade)
@@ -138,10 +141,10 @@ def _find_opening_trade(
 
 def _match(
         pnl: TradingPnl,
-        closing_trade: SplitTrade,
+        closing_trade: SplitTrade[TTradeData],
         sec: ISecurity[TSecurityKey],
-        unmatched: IUnmatchedPool,
-        matched: IMatchedPool
+        unmatched: IUnmatchedPool[TTradeData],
+        matched: IMatchedPool[TTradeData]
 ) -> tuple[SplitTrade | None, TradingPnl]:
     closing_trade, opening_trade, unmatched_opening_trade = _find_opening_trade(
         closing_trade,
@@ -169,10 +172,10 @@ def _match(
 
 def _reduce_position(
         pnl: TradingPnl,
-        closing: SplitTrade | None,
+        closing: SplitTrade[TTradeData] | None,
         sec: ISecurity[TSecurityKey],
-        unmatched: IUnmatchedPool,
-        matched: IMatchedPool
+        unmatched: IUnmatchedPool[TTradeData],
+        matched: IMatchedPool[TTradeData]
 ) -> TradingPnl:
     while closing is not None and closing.quantity != 0 and unmatched.has(closing):
         closing, pnl = _match(
@@ -197,10 +200,10 @@ def _reduce_position(
 
 def _add_pnl_trade(
         pnl: TradingPnl,
-        trd: SplitTrade,
+        trd: SplitTrade[TTradeData],
         sec: ISecurity[TSecurityKey],
-        unmatched: IUnmatchedPool,
-        matched: IMatchedPool
+        unmatched: IUnmatchedPool[TTradeData],
+        matched: IMatchedPool[TTradeData]
 ) -> TradingPnl:
     if (
         # We are flat
@@ -228,15 +231,23 @@ def _add_pnl_trade(
 
 def add_trade(
         pnl: TradingPnl,
-        trd: ITrade,
+        trd: ITrade[TTradeData],
         sec: ISecurity[TSecurityKey],
-        unmatched: IUnmatchedPool,
-        matched: IMatchedPool
+        unmatched: IUnmatchedPool[TTradeData],
+        matched: IMatchedPool[TTradeData]
 ) -> TradingPnl:
-    return _add_pnl_trade(
-        pnl,
-        SplitTrade(trd.quantity, trd),
-        sec,
-        unmatched,
-        matched
-    )
+    if sec.is_cash:
+        # Cash trades are always realized.
+        return TradingPnl(
+            trd.quantity,
+            Decimal(0),
+            trd.quantity * trd.price
+        )
+    else:
+        return _add_pnl_trade(
+            pnl,
+            SplitTrade(trd.quantity, trd),
+            sec,
+            unmatched,
+            matched
+        )
