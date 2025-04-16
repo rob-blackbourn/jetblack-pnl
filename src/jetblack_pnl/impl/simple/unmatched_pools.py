@@ -2,7 +2,7 @@
 
 from typing import Sequence
 
-from ...core.types import SplitTrade, IUnmatchedPool
+from ...core import SplitTrade, IUnmatchedPool
 
 
 class UnmatchedPool:

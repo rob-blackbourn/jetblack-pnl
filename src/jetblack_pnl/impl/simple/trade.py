@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from ...core.types import ITrade
+from ...core import ITrade
 
 from .utils import to_decimal
 

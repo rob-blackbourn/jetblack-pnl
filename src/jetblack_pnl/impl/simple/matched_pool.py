@@ -3,7 +3,7 @@
 from typing import Sequence
 
 
-from ...core.types import SplitTrade, IMatchedPool
+from ...core import SplitTrade, IMatchedPool
 
 
 class MatchedPool(IMatchedPool):
