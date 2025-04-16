@@ -5,17 +5,12 @@ from typing import Callable, Generic
 
 from .algorithm import add_trade
 
-from .types import (
-    TBookKey,
-    IBook,
-    TSecurityKey,
-    ISecurity,
-    TTradeData,
-    ITrade,
-    TradingPnl,
-    IMatchedPool,
-    IUnmatchedPool
-)
+from .book import IBook, TBookKey
+from .matched_pool import IMatchedPool
+from .security import ISecurity, TSecurityKey
+from .trade import TTradeData, ITrade
+from .trading_pnl import TradingPnl
+from .unmatched_pool import IUnmatchedPool
 
 
 class PnlBook(Generic[TSecurityKey, TBookKey, TTradeData]):

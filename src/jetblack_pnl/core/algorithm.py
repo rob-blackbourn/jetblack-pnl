@@ -37,16 +37,12 @@ match.
 
 from decimal import Decimal
 
-from .types import (
-    TSecurityKey,
-    ISecurity,
-    TTradeData,
-    ITrade,
-    SplitTrade,
-    IUnmatchedPool,
-    IMatchedPool,
-    TradingPnl
-)
+from .matched_pool import IMatchedPool
+from .security import TSecurityKey, ISecurity
+from .split_trade import SplitTrade
+from .trade import TTradeData, ITrade
+from .trading_pnl import TradingPnl
+from .unmatched_pool import IUnmatchedPool
 
 
 def _extend_position(
