@@ -50,6 +50,6 @@ class PnlBook(Generic[TSecurityKey, TBookKey]):
             matched = self._matched_factory()
 
         trade = Trade(quantity, price)
-        pnl = add_trade(pnl, trade, unmatched, matched)
+        pnl = add_trade(pnl, trade, security, unmatched, matched)
         self._cache[key] = (pnl, unmatched, matched)
         return pnl

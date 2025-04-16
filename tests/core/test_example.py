@@ -19,20 +19,20 @@ def test_fifo() -> None:
     # Buy 6 @ 100
     pnl = pnl_book.add_trade(apple, tech, 6, 100)
     # (quantity, avg_cost, price, realized, unrealized)
-    assert pnl.strip(100) == (6, 100, 100, 0, 0)
+    assert pnl.strip(apple, 100) == (6, 100, 100, 0, 0)
 
     # Buy 6 @ 106
     pnl = pnl_book.add_trade(apple, tech, 6, 106)
-    assert pnl.strip(106) == (12, 103, 106, 0, 36)
+    assert pnl.strip(apple, 106) == (12, 103, 106, 0, 36000)
 
     # Buy 6 @ 103
     pnl = pnl_book.add_trade(apple, tech, 6, 103)
-    assert pnl.strip(103) == (18, 103, 103, 0, 0)
+    assert pnl.strip(apple, 103) == (18, 103, 103, 0, 0)
 
     # Sell 9 @ 105
     pnl = pnl_book.add_trade(apple, tech, -9, 105)
-    assert pnl.strip(105) == (9, 104, 105, 27, 9)
+    assert pnl.strip(apple, 105) == (9, 104, 105, 27000, 9000)
 
     # Sell 9 @ 107
     pnl = pnl_book.add_trade(apple, tech, -9, 107)
-    assert pnl.strip(107) == (0, 0, 107, 54, 0)
+    assert pnl.strip(apple, 107) == (0, 0, 107, 54000, 0)

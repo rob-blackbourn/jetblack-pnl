@@ -35,12 +35,21 @@ If the trade is larger it is split and the remainder becomes the next trade to
 match.
 """
 
-from .types import ITrade, SplitTrade, IUnmatchedPool, IMatchedPool, TradingPnl
+from .types import (
+    TSecurityKey,
+    ISecurity,
+    ITrade,
+    SplitTrade,
+    IUnmatchedPool,
+    IMatchedPool,
+    TradingPnl
+)
 
 
 def _extend_position(
         pnl: TradingPnl,
-        trade: SplitTrade,
+        trd: SplitTrade,
+        sec: ISecurity[TSecurityKey],
         unmatched: IUnmatchedPool
 ) -> TradingPnl:
     """Extend a position.
@@ -55,15 +64,16 @@ def _extend_position(
 
     Args:
         pnl (TradingPnl): The current P/L.
-        trade (IPnlTrade): The new trade.
+        trd (SplitTrade): The new trade.
+        sec (ISecurity[TSecurityKey]): The security.
         unmatched (IUnmatchedPoll): The pool of unmatched trades.
 
     Returns:
         TradingPnl: The new P/L
     """
-    quantity = pnl.quantity + trade.quantity
-    cost = pnl.cost - trade.quantity * trade.trade.price
-    unmatched.push(trade)
+    quantity = pnl.quantity + trd.quantity
+    cost = pnl.cost - trd.quantity * sec.contract_size * trd.trade.price
+    unmatched.push(trd)
 
     return TradingPnl(
         quantity,
@@ -129,6 +139,7 @@ def _find_opening_trade(
 def _match(
         pnl: TradingPnl,
         closing_trade: SplitTrade,
+        sec: ISecurity[TSecurityKey],
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> tuple[SplitTrade | None, TradingPnl]:
@@ -140,8 +151,12 @@ def _match(
     matched.push(opening_trade, closing_trade)
 
     # Note that the open will have the opposite sign to the close.
-    close_value = closing_trade.quantity * closing_trade.trade.price
-    open_cost = -(opening_trade.quantity * opening_trade.trade.price)
+    close_value = (
+        closing_trade.quantity * sec.contract_size * closing_trade.trade.price
+    )
+    open_cost = -(
+        opening_trade.quantity * sec.contract_size * opening_trade.trade.price
+    )
 
     pnl = TradingPnl(
         pnl.quantity - opening_trade.quantity,
@@ -155,6 +170,7 @@ def _match(
 def _reduce_position(
         pnl: TradingPnl,
         closing: SplitTrade | None,
+        sec: ISecurity[TSecurityKey],
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
@@ -162,6 +178,7 @@ def _reduce_position(
         closing, pnl = _match(
             pnl,
             closing,
+            sec,
             unmatched,
             matched
         )
@@ -170,6 +187,7 @@ def _reduce_position(
         pnl = _add_pnl_trade(
             pnl,
             closing,
+            sec,
             unmatched,
             matched
         )
@@ -179,7 +197,8 @@ def _reduce_position(
 
 def _add_pnl_trade(
         pnl: TradingPnl,
-        trade: SplitTrade,
+        trd: SplitTrade,
+        sec: ISecurity[TSecurityKey],
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
@@ -187,19 +206,21 @@ def _add_pnl_trade(
         # We are flat
         pnl.quantity == 0 or
         # We are long and buying
-        (pnl.quantity > 0 and trade.quantity > 0) or
+        (pnl.quantity > 0 and trd.quantity > 0) or
         # We are short and selling.
-        (pnl.quantity < 0 and trade.quantity < 0)
+        (pnl.quantity < 0 and trd.quantity < 0)
     ):
         return _extend_position(
             pnl,
-            trade,
+            trd,
+            sec,
             unmatched
         )
     else:
         return _reduce_position(
             pnl,
-            trade,
+            trd,
+            sec,
             unmatched,
             matched
         )
@@ -207,13 +228,15 @@ def _add_pnl_trade(
 
 def add_trade(
         pnl: TradingPnl,
-        trade: ITrade,
+        trd: ITrade,
+        sec: ISecurity[TSecurityKey],
         unmatched: IUnmatchedPool,
         matched: IMatchedPool
 ) -> TradingPnl:
     return _add_pnl_trade(
         pnl,
-        SplitTrade(trade.quantity, trade),
+        SplitTrade(trd.quantity, trd),
+        sec,
         unmatched,
         matched
     )

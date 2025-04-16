@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from sqlite3 import Connection
 
-from ...core import TradingPnl, add_trade
+from ...core import TradingPnl, add_trade, ISecurity
 
 from .trade import Trade
 from .pools import MatchedPool, UnmatchedPool
@@ -28,29 +28,29 @@ class TradeDb:
     def add_trade(
         self,
         timestamp: datetime,
-        ticker: str,
+        security: ISecurity[str],
         quantity: int | Decimal,
         price: int | Decimal,
         book: str
     ) -> TradingPnl:
         cur = self._con.cursor()
         try:
-            ensure_pnl(cur, ticker, book, timestamp)
+            ensure_pnl(cur, security.key, book, timestamp)
 
-            matched = MatchedPool(cur, ticker, book)
-            unmatched = UnmatchedPool.Fifo(cur, ticker, book)
-            pnl = select_pnl(cur, ticker, book, timestamp)
+            matched = MatchedPool(cur, security.key, book)
+            unmatched = UnmatchedPool.Fifo(cur, security.key, book)
+            pnl = select_pnl(cur, security.key, book, timestamp)
 
             trade = Trade.create(
                 cur,
                 timestamp,
-                ticker,
+                security.key,
                 _to_decimal(quantity),
                 _to_decimal(price),
                 book
             )
-            pnl = add_trade(pnl, trade, unmatched, matched)
-            save_pnl(cur, pnl, ticker, book, timestamp)
+            pnl = add_trade(pnl, trade, security, unmatched, matched)
+            save_pnl(cur, pnl, security.key, book, timestamp)
             self._con.commit()
             return pnl
         finally:
