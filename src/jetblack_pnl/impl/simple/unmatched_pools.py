@@ -25,6 +25,11 @@ class UnmatchedPool:
         def has(self, _closing: SplitTrade) -> bool:
             return len(self._pool) > 0
 
+        @property
+        def pool(self) -> Sequence[SplitTrade]:
+            """Returns the unmatched pool"""
+            return self._pool
+
         def __len__(self) -> int:
             return len(self._pool)
 
@@ -57,6 +62,11 @@ class UnmatchedPool:
 
         def has(self, _closing: SplitTrade) -> bool:
             return len(self._pool) > 0
+
+        @property
+        def pool(self) -> Sequence[SplitTrade]:
+            """Returns the unmatched pool"""
+            return self._pool
 
         def __len__(self) -> int:
             return len(self._pool)
@@ -96,6 +106,11 @@ class UnmatchedPool:
         def has(self, _closing: SplitTrade) -> bool:
             return len(self._pool) > 0
 
+        @property
+        def pool(self) -> Sequence[SplitTrade]:
+            """Returns the unmatched pool"""
+            return self._pool
+
         def __len__(self) -> int:
             return len(self._pool)
 
@@ -133,6 +148,11 @@ class UnmatchedPool:
 
         def has(self, _closing: SplitTrade) -> bool:
             return len(self._pool) > 0
+
+        @property
+        def pool(self) -> Sequence[SplitTrade]:
+            """Returns the unmatched pool"""
+            return self._pool
 
         def __len__(self) -> int:
             return len(self._pool)

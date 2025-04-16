@@ -16,6 +16,11 @@ class MatchedPool(IMatchedPool):
         matched_trade = (opening, closing)
         self._pool = tuple((*self._pool, matched_trade))
 
+    @property
+    def pool(self) -> Sequence[tuple[SplitTrade, SplitTrade]]:
+        """Returns the matched pool"""
+        return self._pool
+
     def __len__(self) -> int:
         return len(self._pool)
 

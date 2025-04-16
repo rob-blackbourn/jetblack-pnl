@@ -39,4 +39,5 @@ class Trade(ITrade[None]):
         )
 
     def __repr__(self) -> str:
-        return f"{self.quantity} @ {self.price}"
+        side = "buy" if self.quantity > 0 else "sell"
+        return f"{side} {abs(self.quantity)} @ {self.price}"
