@@ -235,9 +235,9 @@ def add_trade(
     if sec.is_cash:
         # Cash trades are always realized.
         return TradingPnl(
-            trd.quantity,
+            Decimal(1),
             Decimal(0),
-            trd.quantity * trd.price
+            trd.quantity + pnl.realized
         )
     else:
         return _add_pnl_trade(
