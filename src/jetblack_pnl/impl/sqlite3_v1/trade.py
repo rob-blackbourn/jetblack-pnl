@@ -11,7 +11,7 @@ from sqlite3 import Cursor
 from ...core import ITrade
 
 
-class Trade(ITrade):
+class Trade(ITrade[None]):
 
     def __init__(
         self,
@@ -42,6 +42,10 @@ class Trade(ITrade):
         return self._ticker
 
     @property
+    def book(self) -> str:
+        return self._book
+
+    @property
     def quantity(self) -> Decimal:
         return self._quantity
 
@@ -50,8 +54,8 @@ class Trade(ITrade):
         return self._price
 
     @property
-    def book(self) -> str:
-        return self._book
+    def data(self) -> None:
+        return None
 
     def __repr__(self) -> str:
         return f"[{self.trade_id}: {self.timestamp.isoformat()}] {self.quantity} {self.ticker} @ {self.price} in {self.book}"

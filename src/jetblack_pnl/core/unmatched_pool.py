@@ -1,12 +1,13 @@
 """An interface for an unmatched pool.
 """
 
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from .split_trade import SplitTrade
 from .trade import TTradeData
 
 
+@runtime_checkable
 class IUnmatchedPool(Protocol[TTradeData]):
     """A pool of unmatched trades"""
 

@@ -40,3 +40,6 @@ class TradingPnl(NamedTuple):
             self.realized,
             self.unrealized(security, price)
         )
+
+    def __repr__(self) -> str:
+        return f"position: {self.quantity}, cost: {self.cost}, realized: {self.realized}"

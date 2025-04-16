@@ -80,6 +80,9 @@ class UnmatchedPool:
                 )
             )
 
+        def insert(self, opening: SplitTrade) -> None:
+            self.append(opening)
+
         def pop(self, closing: SplitTrade) -> SplitTrade:
             # Find the oldest unmatched trade that is in the valid window.
             timestamp = cast(Trade, closing.trade).timestamp

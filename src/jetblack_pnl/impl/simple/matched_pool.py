@@ -27,3 +27,6 @@ class MatchedPool(IMatchedPool):
 
     def __str__(self) -> str:
         return str(self._pool)
+
+    def __repr__(self) -> str:
+        return str(self._pool)

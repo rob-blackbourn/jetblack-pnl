@@ -37,6 +37,9 @@ class UnmatchedPool:
         def __str__(self) -> str:
             return str(self._pool)
 
+        def __repr__(self) -> str:
+            return str(self._pool)
+
     class Lifo(IUnmatchedPool):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
@@ -65,6 +68,9 @@ class UnmatchedPool:
             )
 
         def __str__(self) -> str:
+            return str(self._pool)
+
+        def __repr__(self) -> str:
             return str(self._pool)
 
     class BestPrice(IUnmatchedPool):
@@ -102,6 +108,9 @@ class UnmatchedPool:
         def __str__(self) -> str:
             return str(self._pool)
 
+        def __repr__(self) -> str:
+            return str(self._pool)
+
     class WorstPrice(IUnmatchedPool):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
@@ -135,4 +144,7 @@ class UnmatchedPool:
             )
 
         def __str__(self) -> str:
+            return str(self._pool)
+
+        def __repr__(self) -> str:
             return str(self._pool)
