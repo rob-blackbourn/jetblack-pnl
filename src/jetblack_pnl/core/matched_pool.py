@@ -4,15 +4,14 @@
 from typing import Protocol, runtime_checkable
 
 from .split_trade import SplitTrade
-from .trade import TTradeData
 
 
 @runtime_checkable
-class IMatchedPool(Protocol[TTradeData]):
+class IMatchedPool(Protocol):
 
     def append(
         self,
-        opening: SplitTrade[TTradeData],
-        closing: SplitTrade[TTradeData]
+        opening: SplitTrade,
+        closing: SplitTrade
     ) -> None:
         ...

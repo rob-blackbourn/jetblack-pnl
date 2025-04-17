@@ -8,12 +8,12 @@ from .algorithm import add_trade
 from .book import IBook, TBookKey
 from .matched_pool import IMatchedPool
 from .security import ISecurity, TSecurityKey
-from .trade import TTradeData, ITrade
+from .trade import ITrade
 from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
 
-class PnlBook(Generic[TSecurityKey, TBookKey, TTradeData]):
+class PnlBook(Generic[TSecurityKey, TBookKey]):
     """A simple implementation of a PnL book"""
 
     def __init__(
@@ -32,7 +32,7 @@ class PnlBook(Generic[TSecurityKey, TBookKey, TTradeData]):
         self,
         security: ISecurity[TSecurityKey],
         book: IBook[TBookKey],
-        trade: ITrade[TTradeData],
+        trade: ITrade,
     ) -> TradingPnl:
         key = (security.key, book.key)
         if key in self._cache:

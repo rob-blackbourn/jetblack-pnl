@@ -2,18 +2,17 @@
 """
 
 from decimal import Decimal
-from typing import Generic
 
-from .trade import TTradeData, ITrade
+from .trade import ITrade
 
 
-class SplitTrade(Generic[TTradeData]):
+class SplitTrade:
     """A split trade can or has been split from a larger trade"""
 
     def __init__(
             self,
             quantity: Decimal,
-            trade: ITrade[TTradeData],
+            trade: ITrade,
     ) -> None:
         self._quantity = quantity
         self._trade = trade
@@ -24,7 +23,7 @@ class SplitTrade(Generic[TTradeData]):
         return self._quantity
 
     @property
-    def trade(self) -> ITrade[TTradeData]:
+    def trade(self) -> ITrade:
         """The trade"""
         return self._trade
 

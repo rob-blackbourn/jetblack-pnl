@@ -7,7 +7,7 @@ from ...core import ITrade
 from .utils import to_decimal
 
 
-class Trade(ITrade[None]):
+class Trade(ITrade):
     """A simple trade"""
 
     def __init__(
@@ -25,11 +25,6 @@ class Trade(ITrade[None]):
     @property
     def price(self) -> Decimal:
         return self._price
-
-    @property
-    def data(self) -> None:
-        """No extra data"""
-        return None
 
     def __eq__(self, value: object) -> bool:
         return (

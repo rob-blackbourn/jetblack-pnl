@@ -4,21 +4,20 @@
 from typing import Protocol, runtime_checkable
 
 from .split_trade import SplitTrade
-from .trade import TTradeData
 
 
 @runtime_checkable
-class IUnmatchedPool(Protocol[TTradeData]):
+class IUnmatchedPool(Protocol):
     """A pool of unmatched trades"""
 
-    def append(self, opening: SplitTrade[TTradeData]) -> None:
+    def append(self, opening: SplitTrade) -> None:
         ...
 
-    def insert(self, opening: SplitTrade[TTradeData]) -> None:
+    def insert(self, opening: SplitTrade) -> None:
         ...
 
-    def pop(self, closing: SplitTrade[TTradeData]) -> SplitTrade[TTradeData]:
+    def pop(self, closing: SplitTrade) -> SplitTrade:
         ...
 
-    def has(self, closing: SplitTrade[TTradeData]) -> bool:
+    def has(self, closing: SplitTrade) -> bool:
         ...

@@ -7,7 +7,7 @@ from .pnl_book import PnlBook
 from .pnl_strip import PnlStrip
 from .security import TSecurityKey, ISecurity
 from .split_trade import SplitTrade
-from .trade import TTradeData, ITrade
+from .trade import ITrade
 from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
@@ -28,7 +28,6 @@ __all__ = [
 
     'SplitTrade',
 
-    'TTradeData',
     'ITrade',
 
     'TradingPnl',
