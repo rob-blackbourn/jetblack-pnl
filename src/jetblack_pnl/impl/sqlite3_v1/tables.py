@@ -3,21 +3,54 @@
 from sqlite3 import Cursor
 
 
+def create_table_security(cur: Cursor) -> None:
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS security
+        (
+            security_key    INT             NOT NULL,
+            name            VARCHAR(32)     NOT NULL,
+            contract_size   DECIMAL(12, 0)  NOT NULL,
+            is_cash         BOOLEAN         NOT NULL,
+
+            PRIMARY KEY(security_key),
+            UNIQUE (name)
+        )
+        """
+    )
+
+
+def create_table_book(cur: Cursor) -> None:
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS book
+        (
+            book_key    INT         NOT NULL,
+            name        VARCHAR(32) NOT NULL,
+
+            PRIMARY KEY(book_key)
+        )
+        """
+    )
+
+
 def create_table_pnl(cur: Cursor) -> None:
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS pnl
         (
-            ticker      VARCHAR(32)     NOT NULL,
-            book        VARCHAR(32)     NOT NULL,
-            quantity    DECIMAL(12, 0)  NOT NULL,
-            cost        DECIMAL(18, 6)  NOT NULL,
-            realized    DECIMAL(18, 6)  NOT NULL,
+            security_key    INT             NOT NULL,
+            book_key        INT             NOT NULL,
+            quantity        DECIMAL(12, 0)  NOT NULL,
+            cost            DECIMAL(18, 6)  NOT NULL,
+            realized        DECIMAL(18, 6)  NOT NULL,
 
-            valid_from  DATETIME        NOT NULL,
-            valid_to    DATETIME        NOT NULL,
+            valid_from      DATETIME        NOT NULL,
+            valid_to        DATETIME        NOT NULL,
 
-            PRIMARY KEY(valid_from, valid_to, ticker, book)
+            PRIMARY KEY(valid_from, valid_to, security_key, book_key)
+            FOREIGN KEY (security_key) REFERENCES security(security_key),
+            FOREIGN KEY (book_key) REFERENCES book(book_key)
         )
         """
     )
@@ -28,14 +61,16 @@ def create_table_trade(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS trade
         (
-            trade_id    INTEGER         NOT NULL,
-            timestamp   DATETIME        NOT NULL,
-            ticker      TEXT            NOT NULL,
-            quantity    DECIMAL         NOT NULL,
-            price       DECIMAL         NOT NULL,
-            book        TEXT            NOT NULL,
+            trade_id        INTEGER         NOT NULL,
+            timestamp       DATETIME        NOT NULL,
+            security_key    INT             NOT NULL,
+            book_key        TEXT            NOT NULL,
+            quantity        DECIMAL         NOT NULL,
+            price           DECIMAL         NOT NULL,
 
-            PRIMARY KEY(trade_id)
+            PRIMARY KEY(trade_id),
+            FOREIGN KEY (security_key) REFERENCES security(security_key),
+            FOREIGN KEY (book_key) REFERENCES book(book_key)
         );
         """
     )
@@ -80,6 +115,8 @@ def create_table_matched_trade(cur: Cursor) -> None:
 
 
 def create_tables(cur: Cursor) -> None:
+    create_table_security(cur)
+    create_table_book(cur)
     create_table_pnl(cur)
     create_table_trade(cur)
     create_table_unmatched_trade(cur)
@@ -91,3 +128,5 @@ def drop_tables(cur: Cursor) -> None:
     cur.execute("DROP TABLE unmatched_trade;")
     cur.execute("DROP TABLE trade;")
     cur.execute("DROP TABLE pnl;")
+    cur.execute("DROP TABLE book;")
+    cur.execute("DROP TABLE security;")

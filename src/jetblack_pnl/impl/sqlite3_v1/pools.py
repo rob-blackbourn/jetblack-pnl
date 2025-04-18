@@ -9,6 +9,8 @@ from ...core import (
     SplitTrade,
     IMatchedPool,
     IUnmatchedPool,
+    ISecurity,
+    IBook
 )
 
 from .trade import Trade
@@ -17,9 +19,14 @@ from .pnl import MAX_VALID_TO
 
 class MatchedPool(IMatchedPool):
 
-    def __init__(self, cur: Cursor, ticker: str, book: str) -> None:
+    def __init__(
+            self,
+            cur: Cursor,
+            security: ISecurity[int],
+            book: IBook[int]
+    ) -> None:
         self._cur = cur
-        self._ticker = ticker
+        self._security = security
         self._book = book
 
     def append(self, opening: SplitTrade, closing: SplitTrade) -> None:
@@ -50,9 +57,14 @@ class UnmatchedPool:
 
     class Fifo(IUnmatchedPool):
 
-        def __init__(self, cur: Cursor, ticker: str, book: str) -> None:
+        def __init__(
+                self,
+                cur: Cursor,
+                security: ISecurity[int],
+                book: IBook[int]
+        ) -> None:
             self._cur = cur
-            self._ticker = ticker
+            self._security = security
             self._book = book
 
         def append(self, opening: SplitTrade) -> None:
@@ -160,15 +172,15 @@ class UnmatchedPool:
                 ON
                     t.trade_id = ut.trade_id
                 AND
-                    t.ticker = ?
+                    t.security_key = ?
                 AND
-                    t.book = ?
+                    t.book_key = ?
                 WHERE
                     ut.valid_from <= ? AND ? < ut.valid_to
                 """,
                 (
-                    self._ticker,
-                    self._book,
+                    self._security.key,
+                    self._book.key,
                     timestamp,
                     timestamp
                 )

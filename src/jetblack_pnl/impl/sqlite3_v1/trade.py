@@ -8,26 +8,26 @@ from typing import Optional
 
 from sqlite3 import Cursor
 
-from ...core import ITrade
+from ...core import ITrade, ISecurity, IBook
 
 
-class Trade(ITrade[None]):
+class Trade(ITrade):
 
     def __init__(
         self,
         trade_id: int,
         timestamp: datetime,
-        ticker: str,
+        security: ISecurity[int],
+        book: IBook[int],
         quantity: Decimal,
         price: Decimal,
-        book: str
     ) -> None:
         self._trade_id = trade_id
         self._timestamp = timestamp
-        self._ticker = ticker
+        self._security = security
+        self._book = book
         self._quantity = quantity
         self._price = price
-        self._book = book
 
     @property
     def trade_id(self) -> int:
@@ -38,11 +38,11 @@ class Trade(ITrade[None]):
         return self._timestamp
 
     @property
-    def ticker(self) -> str:
-        return self._ticker
+    def security(self) -> ISecurity[int]:
+        return self._security
 
     @property
-    def book(self) -> str:
+    def book(self) -> IBook[int]:
         return self._book
 
     @property
@@ -53,12 +53,8 @@ class Trade(ITrade[None]):
     def price(self) -> Decimal:
         return self._price
 
-    @property
-    def data(self) -> None:
-        return None
-
     def __repr__(self) -> str:
-        return f"[{self.trade_id}: {self.timestamp.isoformat()}] {self.quantity} {self.ticker} @ {self.price} in {self.book}"
+        return f"[{self.trade_id}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
 
     @classmethod
     def read(cls, cur: Cursor, trade_id: int) -> Optional[Trade]:
@@ -66,10 +62,10 @@ class Trade(ITrade[None]):
             """
             SELECT
                 timestamp,
-                ticker,
+                security_key,
+                book_key,
                 quantity,
-                price,
-                book
+                price
             FROM
                 trade
             WHERE
@@ -80,34 +76,34 @@ class Trade(ITrade[None]):
         row = cur.fetchone()
         if row is None:
             return None
-        (timestamp, ticker, quantity, price, book) = row
-        return Trade(trade_id, timestamp, ticker, quantity, price, book)
+        (timestamp, security_key, book_key, quantity, price) = row
+        return Trade(trade_id, timestamp, ticker, book, quantity, price)
 
     @classmethod
     def create(
         cls,
         cur: Cursor,
         timestamp: datetime,
-        ticker: str,
+        security: ISecurity[int],
+        book: IBook[int],
         quantity: Decimal,
         price: Decimal,
-        book: str
     ) -> Trade:
         cur.execute(
             """
-            INSERT INTO trade(timestamp, ticker, quantity, price, book)
+            INSERT INTO trade(timestamp, security_key, book_key, quantity, price)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (timestamp, ticker, quantity, price, book)
+            (timestamp, security.key, book.key, quantity, price)
         )
         trade_id = cur.lastrowid
         assert (trade_id is not None)
         trade = Trade(
             trade_id,
             timestamp,
-            ticker,
+            security,
+            book,
             quantity,
             price,
-            book
         )
         return trade

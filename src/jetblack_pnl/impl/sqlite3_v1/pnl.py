@@ -5,12 +5,17 @@ from decimal import Decimal
 
 from sqlite3 import Cursor
 
-from ...core import TradingPnl
+from ...core import TradingPnl, ISecurity, IBook
 
 MAX_VALID_TO = datetime(9999, 12, 31, 23, 59, 59)
 
 
-def ensure_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> None:
+def ensure_pnl(
+        cur: Cursor,
+        security: ISecurity[int],
+        book: IBook[int],
+        timestamp: datetime
+) -> None:
     # There should be no pnl on or after this timestamp.
     cur.execute(
         """
@@ -19,13 +24,13 @@ def ensure_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> None
         FROM
             pnl
         WHERE
-            ticker = ?
+            security_key = ?
         AND
-            book = ?
+            book_key = ?
         AND
             valid_from >= ?;
         """,
-        (ticker, book, timestamp)
+        (security.key, book.key, timestamp)
     )
     row = cur.fetchone()
     assert (row is not None)
@@ -34,7 +39,12 @@ def ensure_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> None
         raise RuntimeError("there is already p/l for this timestamp")
 
 
-def select_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> TradingPnl:
+def select_pnl(
+        cur: Cursor,
+        security: ISecurity[int],
+        book: IBook[int],
+        timestamp: datetime
+) -> TradingPnl:
     cur.execute(
         """
         SELECT
@@ -44,15 +54,15 @@ def select_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> Trad
         FROM
             pnl
         WHERE
-            ticker = ?
+            security_key = ?
         AND
-            book = ?
+            book_key = ?
         AND
             valid_from <= ?
         AND
             valid_to = ?
         """,
-        (ticker, book, timestamp, MAX_VALID_TO)
+        (security.key, book.key, timestamp, MAX_VALID_TO)
     )
     row = cur.fetchone()
     if row is None:
@@ -62,7 +72,13 @@ def select_pnl(cur: Cursor, ticker: str, book: str, timestamp: datetime) -> Trad
     return TradingPnl(quantity, cost, realized)
 
 
-def save_pnl(cur: Cursor, pnl: TradingPnl, ticker: str, book: str, timestamp: datetime) -> None:
+def save_pnl(
+        cur: Cursor,
+        pnl: TradingPnl,
+        security: ISecurity[int],
+        book: IBook[int],
+        timestamp: datetime
+) -> None:
     cur.execute(
         """
         UPDATE
@@ -78,7 +94,7 @@ def save_pnl(cur: Cursor, pnl: TradingPnl, ticker: str, book: str, timestamp: da
         AND
             valid_to = ?;
         """,
-        (timestamp, ticker, book, timestamp, MAX_VALID_TO)
+        (timestamp, security.key, book.key, timestamp, MAX_VALID_TO)
     )
 
     cur.execute(
@@ -103,8 +119,8 @@ def save_pnl(cur: Cursor, pnl: TradingPnl, ticker: str, book: str, timestamp: da
         );
         """,
         (
-            ticker,
-            book,
+            security.key,
+            book.key,
             pnl.quantity,
             pnl.cost,
             pnl.realized,
