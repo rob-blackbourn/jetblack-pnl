@@ -1,4 +1,5 @@
 from sqlite3 import Connection, Cursor
+from typing import Self
 
 from ...core import IBook
 
@@ -25,7 +26,7 @@ class Book(IBook[int]):
         return self.name
 
     @classmethod
-    def load(cls, cur: Cursor, key: int) -> 'Book':
+    def load(cls, cur: Cursor, key: int) -> Self:
         cur.execute(
             """
             SELECT
@@ -44,7 +45,7 @@ class Book(IBook[int]):
         return cls(key, name)
 
     @classmethod
-    def load_by_name(cls, con: Connection, name: str) -> 'Book':
+    def load_by_name(cls, con: Connection, name: str) -> Self:
         cur = con.cursor()
         cur.execute(
             """
@@ -64,7 +65,7 @@ class Book(IBook[int]):
         return cls(key, name)
 
     @classmethod
-    def create(cls, con: Connection, name: str) -> 'Book':
+    def create(cls, con: Connection, name: str) -> Self:
         cur = con.cursor()
         cur.execute(
             """

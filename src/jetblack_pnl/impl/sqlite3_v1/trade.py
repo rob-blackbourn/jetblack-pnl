@@ -1,10 +1,8 @@
 """A market trade"""
 
-from __future__ import annotations
-
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, Self
 
 from sqlite3 import Cursor
 
@@ -59,7 +57,7 @@ class Trade(ITrade[int]):
         return f"[{self.key}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
 
     @classmethod
-    def read(cls, cur: Cursor, key: int) -> Optional[Trade]:
+    def load(cls, cur: Cursor, key: int) -> Optional[Self]:
         cur.execute(
             """
             SELECT
@@ -81,7 +79,7 @@ class Trade(ITrade[int]):
         (timestamp, security_id, book_id, quantity, price) = row
         security = Security.load(cur, security_id)
         book = Book.load(cur, book_id)
-        return Trade(key, timestamp, security, book, quantity, price)
+        return cls(key, timestamp, security, book, quantity, price)
 
     @classmethod
     def create(
@@ -92,7 +90,7 @@ class Trade(ITrade[int]):
         book: IBook[int],
         quantity: Decimal,
         price: Decimal,
-    ) -> Trade:
+    ) -> Self:
         cur.execute(
             """
             INSERT INTO trade(timestamp, security_id, book_id, quantity, price)
@@ -102,7 +100,7 @@ class Trade(ITrade[int]):
         )
         trade_id = cur.lastrowid
         assert trade_id is not None
-        trade = Trade(
+        trade = cls(
             trade_id,
             timestamp,
             security,

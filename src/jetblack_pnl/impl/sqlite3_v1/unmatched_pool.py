@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from decimal import Decimal
 from sqlite3 import Cursor
-from typing import cast
+from typing import cast, Sequence
 
 from ...core import (
     SplitTrade,
-    IMatchedPool,
     IUnmatchedPool,
     ISecurity,
     IBook
@@ -17,45 +18,9 @@ from .trade import Trade
 from .pnl import MAX_VALID_TO
 
 
-class MatchedPool(IMatchedPool):
-
-    def __init__(
-            self,
-            cur: Cursor,
-            security: ISecurity[int],
-            book: IBook[int]
-    ) -> None:
-        self._cur = cur
-        self._security = security
-        self._book = book
-
-    def append(self, opening: SplitTrade, closing: SplitTrade) -> None:
-        self._cur.execute(
-            """
-            INSERT INTO matched_trade(
-                opening_trade_id,
-                closing_trade_id,
-                valid_from,
-                valid_to
-            ) VALUES (
-                ?,
-                ?,
-                ?,
-                ?
-            )
-            """,
-            (
-                cast(Trade, opening.trade).key,
-                cast(Trade, closing.trade).key,
-                cast(Trade, closing.trade).timestamp,
-                MAX_VALID_TO
-            )
-        )
-
-
 class UnmatchedPool:
 
-    class Fifo(IUnmatchedPool):
+    class Fifo(IUnmatchedPool[int]):
 
         def __init__(
                 self,
@@ -67,7 +32,7 @@ class UnmatchedPool:
             self._security = security
             self._book = book
 
-        def append(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade[int]) -> None:
             market_trade = cast(Trade, opening.trade)
 
             self._cur.execute(
@@ -92,10 +57,10 @@ class UnmatchedPool:
                 )
             )
 
-        def insert(self, opening: SplitTrade) -> None:
+        def insert(self, opening: SplitTrade[int]) -> None:
             self.append(opening)
 
-        def pop(self, closing: SplitTrade) -> SplitTrade:
+        def pop(self, closing: SplitTrade[int]) -> SplitTrade[int]:
             # Find the oldest unmatched trade that is in the valid window.
             timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
@@ -153,13 +118,13 @@ class UnmatchedPool:
                     MAX_VALID_TO
                 )
             )
-            market_trade = Trade.read(self._cur, trade_id)
+            market_trade = Trade.load(self._cur, trade_id)
             if market_trade is None:
                 raise RuntimeError("unable to find market trade")
             pnl_trade = SplitTrade(quantity, market_trade)
             return pnl_trade
 
-        def has(self, closing: SplitTrade) -> bool:
+        def has(self, closing: SplitTrade[int]) -> bool:
             timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
                 """
@@ -189,3 +154,42 @@ class UnmatchedPool:
             assert (row is not None)
             (count,) = row
             return count != 0
+
+        def pool_asof(self, asof: datetime) -> Sequence[SplitTrade[int]]:
+            self._cur.execute(
+                """
+                SELECT
+                    trade_id,
+                    quantity
+                FROM
+                    unmatched_trade AS ut
+                JOIN
+                    trade AS t
+                ON
+                    t.trade_id = ut.trade_id
+                WHERE
+                    t.security_id = ?
+                AND
+                    t.book_id = ?
+                AND
+                    ut.valid_from <= ? AND ? < ut.valid_to
+                """,
+                (self._security.key, self._book.key, asof, MAX_VALID_TO)
+            )
+
+            def make_unmatched(
+                    trade_id: int,
+                    quantity: Decimal
+            ) -> SplitTrade[int]:
+                trade = Trade.load(self._cur, trade_id)
+                assert trade is not None
+                return SplitTrade(quantity, trade)
+
+            return tuple(
+                make_unmatched(trade_id, quantity)
+                for trade_id, quantity in self._cur.fetchall()
+            )
+
+        @property
+        def pool(self) -> Sequence[SplitTrade[int]]:
+            return self.pool_asof(datetime.now())

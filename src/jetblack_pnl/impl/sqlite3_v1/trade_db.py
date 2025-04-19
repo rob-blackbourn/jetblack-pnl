@@ -10,7 +10,8 @@ from sqlite3 import Connection
 from ...core import TradingPnl, add_trade, ISecurity, IBook
 
 from .trade import Trade
-from .pools import MatchedPool, UnmatchedPool
+from .matched_pool import MatchedPool
+from .unmatched_pool import UnmatchedPool
 from .tables import create_tables, drop_tables
 from .pnl import save_pnl, select_pnl, ensure_pnl
 

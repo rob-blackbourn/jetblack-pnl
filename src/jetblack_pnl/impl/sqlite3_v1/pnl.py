@@ -2,8 +2,8 @@
 
 from datetime import datetime
 from decimal import Decimal
-
 from sqlite3 import Cursor
+from typing import Sequence
 
 from ...core import TradingPnl, ISecurity, IBook
 
@@ -128,3 +128,38 @@ def save_pnl(
             MAX_VALID_TO
         )
     )
+
+
+def pnl_report(
+        cur: Cursor,
+        timestamp: datetime
+) -> Sequence[tuple[str, str, TradingPnl]]:
+    cur.execute(
+        """
+        SELECT
+            s.name AS security,
+            b.name AS book.
+            p.quantity,
+            p.cost,
+            p.realized
+        FROM
+            pnl AS p
+        JOIN
+            security AS s
+        ON
+            s.security_id = p.security_id
+        JOIN
+            book as b
+        ON
+            b.book_id = p.book_id
+        WHERE
+            valid_from <= ?
+        AND
+            valid_to = ?
+        """,
+        (timestamp, MAX_VALID_TO)
+    )
+    return [
+        (security,  book, TradingPnl(quantity, cost, realized))
+        for security, book, quantity, cost, realized in cur.fetchall()
+    ]
