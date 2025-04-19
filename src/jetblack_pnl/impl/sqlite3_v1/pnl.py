@@ -24,9 +24,9 @@ def ensure_pnl(
         FROM
             pnl
         WHERE
-            security_key = ?
+            security_id = ?
         AND
-            book_key = ?
+            book_id = ?
         AND
             valid_from >= ?;
         """,
@@ -54,9 +54,9 @@ def select_pnl(
         FROM
             pnl
         WHERE
-            security_key = ?
+            security_id = ?
         AND
-            book_key = ?
+            book_id = ?
         AND
             valid_from <= ?
         AND

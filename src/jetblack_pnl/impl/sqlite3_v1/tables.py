@@ -8,12 +8,12 @@ def create_table_security(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS security
         (
-            security_key    INT             NOT NULL,
+            security_id     INT             NOT NULL,
             name            VARCHAR(32)     NOT NULL,
             contract_size   DECIMAL(12, 0)  NOT NULL,
             is_cash         BOOLEAN         NOT NULL,
 
-            PRIMARY KEY(security_key),
+            PRIMARY KEY(security_id),
             UNIQUE (name)
         )
         """
@@ -25,10 +25,10 @@ def create_table_book(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS book
         (
-            book_key    INT         NOT NULL,
-            name        VARCHAR(32) NOT NULL,
+            book_id INT         NOT NULL,
+            name    VARCHAR(32) NOT NULL,
 
-            PRIMARY KEY(book_key)
+            PRIMARY KEY(book_id)
         )
         """
     )
@@ -39,18 +39,18 @@ def create_table_pnl(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS pnl
         (
-            security_key    INT             NOT NULL,
-            book_key        INT             NOT NULL,
-            quantity        DECIMAL(12, 0)  NOT NULL,
-            cost            DECIMAL(18, 6)  NOT NULL,
-            realized        DECIMAL(18, 6)  NOT NULL,
+            security_id INT             NOT NULL,
+            book_id     INT             NOT NULL,
+            quantity    DECIMAL(12, 0)  NOT NULL,
+            cost        DECIMAL(18, 6)  NOT NULL,
+            realized    DECIMAL(18, 6)  NOT NULL,
 
-            valid_from      DATETIME        NOT NULL,
-            valid_to        DATETIME        NOT NULL,
+            valid_from  DATETIME        NOT NULL,
+            valid_to    DATETIME        NOT NULL,
 
-            PRIMARY KEY(valid_from, valid_to, security_key, book_key)
-            FOREIGN KEY (security_key) REFERENCES security(security_key),
-            FOREIGN KEY (book_key) REFERENCES book(book_key)
+            PRIMARY KEY(valid_from, valid_to, security_id, book_id)
+            FOREIGN KEY (security_id) REFERENCES security(security_id),
+            FOREIGN KEY (book_id) REFERENCES book(book_id)
         )
         """
     )
@@ -61,16 +61,16 @@ def create_table_trade(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS trade
         (
-            trade_id        INTEGER         NOT NULL,
-            timestamp       DATETIME        NOT NULL,
-            security_key    INT             NOT NULL,
-            book_key        TEXT            NOT NULL,
-            quantity        DECIMAL         NOT NULL,
-            price           DECIMAL         NOT NULL,
+            trade_id    INTEGER         NOT NULL,
+            timestamp   DATETIME        NOT NULL,
+            security_id INT             NOT NULL,
+            book_id     TEXT            NOT NULL,
+            quantity    DECIMAL         NOT NULL,
+            price       DECIMAL         NOT NULL,
 
             PRIMARY KEY(trade_id),
-            FOREIGN KEY (security_key) REFERENCES security(security_key),
-            FOREIGN KEY (book_key) REFERENCES book(book_key)
+            FOREIGN KEY (security_id) REFERENCES security(security_id),
+            FOREIGN KEY (book_id) REFERENCES book(book_id)
         );
         """
     )

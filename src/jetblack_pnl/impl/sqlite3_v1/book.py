@@ -30,7 +30,7 @@ class Book(IBook[int]):
             FROM
                 book
             WHERE
-                book_key = ?
+                book_id = ?
             """,
             (key,)
         )
@@ -46,7 +46,7 @@ class Book(IBook[int]):
         cur.execute(
             """
             SELECT
-                book_key
+                book_id
             FROM
                 book
             WHERE

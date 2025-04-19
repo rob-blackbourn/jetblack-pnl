@@ -64,8 +64,8 @@ class Trade(ITrade[int]):
             """
             SELECT
                 timestamp,
-                security_key,
-                book_key,
+                security_id,
+                book_id,
                 quantity,
                 price
             FROM
@@ -78,9 +78,9 @@ class Trade(ITrade[int]):
         row = cur.fetchone()
         if row is None:
             return None
-        (timestamp, security_key, book_key, quantity, price) = row
-        security = Security.load(cur, security_key)
-        book = Book.load(cur, book_key)
+        (timestamp, security_id, book_id, quantity, price) = row
+        security = Security.load(cur, security_id)
+        book = Book.load(cur, book_id)
         return Trade(trade_key, timestamp, security, book, quantity, price)
 
     @classmethod
@@ -95,7 +95,7 @@ class Trade(ITrade[int]):
     ) -> Trade:
         cur.execute(
             """
-            INSERT INTO trade(timestamp, security_key, book_key, quantity, price)
+            INSERT INTO trade(timestamp, security_id, book_id, quantity, price)
             VALUES (?, ?, ?, ?, ?)
             """,
             (timestamp, security.key, book.key, quantity, price)

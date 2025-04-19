@@ -172,9 +172,9 @@ class UnmatchedPool:
                 ON
                     t.trade_id = ut.trade_id
                 AND
-                    t.security_key = ?
+                    t.security_id = ?
                 AND
-                    t.book_key = ?
+                    t.book_id = ?
                 WHERE
                     ut.valid_from <= ? AND ? < ut.valid_to
                 """,

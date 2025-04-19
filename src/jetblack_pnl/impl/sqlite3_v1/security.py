@@ -46,7 +46,7 @@ class Security(ISecurity[int]):
             FROM
                 security
             WHERE
-                security_key = ?
+                security_id = ?
             """,
             (key,)
         )
@@ -62,7 +62,7 @@ class Security(ISecurity[int]):
         cur.execute(
             """
             SELECT
-                security_key,
+                security_id,
                 contract_size,
                 is_cash
             FROM
