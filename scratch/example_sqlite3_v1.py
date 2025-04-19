@@ -5,6 +5,7 @@ from decimal import Decimal
 import sqlite3
 
 from jetblack_pnl.impl.sqlite3_v1 import (
+    Trade,
     TradeDb,
     register_handlers,
     Security,
@@ -26,32 +27,38 @@ def main(database: str):
 
     # Buy 6 @ 100
     ts = datetime(2000, 1, 1, 9, 0, 0, 0)
-    pnl = trade_db.add_trade(ts, apple, tech, 6, 100)
+    trade = Trade.create(con, ts, apple, tech, 6, 100)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     # Buy 6 @ 106
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, apple, tech, 6, 106)
+    trade = Trade.create(con, ts, apple, tech, 6, 106)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     # Buy 6 @ 103
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, apple, tech, 6, 103)
+    trade = Trade.create(con, ts, apple, tech, 6, 103)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     # Sell 9 @ 105
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, apple, tech, -9, 105)
+    trade = Trade.create(con, ts, apple, tech, -9, 105)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     # Sell 12 @ 107
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, apple, tech, -12, 107)
+    trade = Trade.create(con, ts, apple, tech, -12, 107)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     # Buy 3 @ 103
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, apple, tech, 3, 103)
+    trade = Trade.create(con, ts, apple, tech, 3, 103)
+    pnl = trade_db.add_trade(ts, trade.security, trade.book, trade)
     print(pnl)
 
     con.close()

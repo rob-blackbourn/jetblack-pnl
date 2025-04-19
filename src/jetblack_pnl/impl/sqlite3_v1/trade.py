@@ -4,11 +4,13 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, Self
 
-from sqlite3 import Cursor
+from sqlite3 import Cursor, Connection
 
 from ...core import ITrade, ISecurity, IBook
+
 from .security import Security
 from .book import Book
+from .utils import to_decimal
 
 
 class Trade(ITrade[int]):
@@ -19,15 +21,15 @@ class Trade(ITrade[int]):
         timestamp: datetime,
         security: ISecurity[int],
         book: IBook[int],
-        quantity: Decimal,
-        price: Decimal,
+        quantity: Decimal | int | str,
+        price: Decimal | int | str,
     ) -> None:
         self._trade_id = trade_key
         self._timestamp = timestamp
         self._security = security
         self._book = book
-        self._quantity = quantity
-        self._price = price
+        self._quantity = to_decimal(quantity)
+        self._price = to_decimal(price)
 
     @property
     def key(self) -> int:
@@ -84,13 +86,14 @@ class Trade(ITrade[int]):
     @classmethod
     def create(
         cls,
-        cur: Cursor,
+        con: Connection,
         timestamp: datetime,
         security: ISecurity[int],
         book: IBook[int],
-        quantity: Decimal,
-        price: Decimal,
+        quantity: int | str | Decimal,
+        price: int | str | Decimal,
     ) -> Self:
+        cur = con.cursor()
         cur.execute(
             """
             INSERT INTO trade(timestamp, security_id, book_id, quantity, price)
@@ -105,7 +108,7 @@ class Trade(ITrade[int]):
             timestamp,
             security,
             book,
-            quantity,
-            price,
+            to_decimal(quantity),
+            to_decimal(price),
         )
         return trade

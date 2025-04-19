@@ -7,17 +7,12 @@ from decimal import Decimal
 
 from sqlite3 import Connection
 
-from ...core import TradingPnl, add_trade, ISecurity, IBook
+from ...core import TradingPnl, add_trade, ISecurity, IBook, ITrade
 
-from .trade import Trade
 from .matched_pool import MatchedPool
 from .unmatched_pool import UnmatchedPool
 from .tables import create_tables, drop_tables
 from .pnl import save_pnl, select_pnl, ensure_pnl
-
-
-def _to_decimal(number: int | Decimal) -> Decimal:
-    return number if isinstance(number, Decimal) else Decimal(number)
 
 
 class TradeDb:
@@ -31,8 +26,7 @@ class TradeDb:
         timestamp: datetime,
         security: ISecurity[int],
         book: IBook[int],
-        quantity: int | Decimal,
-        price: int | Decimal,
+        trade: ITrade[int],
     ) -> TradingPnl:
         cur = self._con.cursor()
         try:
@@ -42,14 +36,6 @@ class TradeDb:
             unmatched = UnmatchedPool.Fifo(cur, security, book)
             pnl = select_pnl(cur, security, book, timestamp)
 
-            trade = Trade.create(
-                cur,
-                timestamp,
-                security,
-                book,
-                _to_decimal(quantity),
-                _to_decimal(price),
-            )
             pnl = add_trade(pnl, trade, security, unmatched, matched)
             save_pnl(cur, pnl, security, book, timestamp)
             self._con.commit()
