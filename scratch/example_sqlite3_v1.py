@@ -21,32 +21,37 @@ def main(database: str):
     # trade_db.drop()
     trade_db.create_tables()
 
-    security = Security.create(con, 'AAPL', Decimal(1), False)
-    book = Book.create(con, 'tech')
+    apple = Security.create(con, 'AAPL', Decimal(1), False)
+    tech = Book.create(con, 'tech')
 
     # Buy 6 @ 100
     ts = datetime(2000, 1, 1, 9, 0, 0, 0)
-    pnl = trade_db.add_trade(ts, security, book, 6, 100)
+    pnl = trade_db.add_trade(ts, apple, tech, 6, 100)
     print(pnl)
 
     # Buy 6 @ 106
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, security, book, 6, 106)
+    pnl = trade_db.add_trade(ts, apple, tech, 6, 106)
     print(pnl)
 
     # Buy 6 @ 103
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, security, book, 6, 103)
+    pnl = trade_db.add_trade(ts, apple, tech, 6, 103)
     print(pnl)
 
     # Sell 9 @ 105
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, security, book, -9, 105)
+    pnl = trade_db.add_trade(ts, apple, tech, -9, 105)
     print(pnl)
 
-    # Sell 9 @ 107
+    # Sell 12 @ 107
     ts += timedelta(seconds=1)
-    pnl = trade_db.add_trade(ts, security, book, -9, 107)
+    pnl = trade_db.add_trade(ts, apple, tech, -12, 107)
+    print(pnl)
+
+    # Buy 3 @ 103
+    ts += timedelta(seconds=1)
+    pnl = trade_db.add_trade(ts, apple, tech, 3, 103)
     print(pnl)
 
     con.close()

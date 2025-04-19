@@ -8,7 +8,7 @@ from .algorithm import add_trade
 from .book import IBook, TBookKey
 from .matched_pool import IMatchedPool
 from .security import ISecurity, TSecurityKey
-from .trade import TTradeKey_co, ITrade
+from .trade import TTradeKey, ITrade
 from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
@@ -32,7 +32,7 @@ class PnlBook(Generic[TSecurityKey, TBookKey]):
         self,
         security: ISecurity[TSecurityKey],
         book: IBook[TBookKey],
-        trade: ITrade[TTradeKey_co],
+        trade: ITrade[TTradeKey],
     ) -> TradingPnl:
         key = (security.key, book.key)
         if key in self._cache:

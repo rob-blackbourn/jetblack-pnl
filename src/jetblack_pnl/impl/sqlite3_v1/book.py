@@ -21,6 +21,9 @@ class Book(IBook[int]):
     def name(self) -> str:
         return self._name
 
+    def __repr__(self):
+        return self.name
+
     @classmethod
     def load(cls, cur: Cursor, key: int) -> 'Book':
         cur.execute(

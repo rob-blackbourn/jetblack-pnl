@@ -59,7 +59,7 @@ class Trade(ITrade[int]):
         return f"[{self.key}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
 
     @classmethod
-    def read(cls, cur: Cursor, trade_key: int) -> Optional[Trade]:
+    def read(cls, cur: Cursor, key: int) -> Optional[Trade]:
         cur.execute(
             """
             SELECT
@@ -71,9 +71,9 @@ class Trade(ITrade[int]):
             FROM
                 trade
             WHERE
-                trade_key = ?
+                trade_id = ?
             """,
-            (trade_key,)
+            (key,)
         )
         row = cur.fetchone()
         if row is None:
@@ -81,7 +81,7 @@ class Trade(ITrade[int]):
         (timestamp, security_id, book_id, quantity, price) = row
         security = Security.load(cur, security_id)
         book = Book.load(cur, book_id)
-        return Trade(trade_key, timestamp, security, book, quantity, price)
+        return Trade(key, timestamp, security, book, quantity, price)
 
     @classmethod
     def create(
@@ -100,10 +100,10 @@ class Trade(ITrade[int]):
             """,
             (timestamp, security.key, book.key, quantity, price)
         )
-        trade_key = cur.lastrowid
-        assert (trade_key is not None)
+        trade_id = cur.lastrowid
+        assert trade_id is not None
         trade = Trade(
-            trade_key,
+            trade_id,
             timestamp,
             security,
             book,

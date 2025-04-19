@@ -1,3 +1,5 @@
+"""A simple security"""
+
 from decimal import Decimal
 
 from sqlite3 import Cursor, Connection
@@ -6,6 +8,7 @@ from ...core import ISecurity
 
 
 class Security(ISecurity[int]):
+    """A security with an integer id"""
 
     def __init__(
             self,
@@ -34,6 +37,9 @@ class Security(ISecurity[int]):
     @property
     def is_cash(self) -> bool:
         return self._is_cash
+
+    def __repr__(self):
+        return self.name
 
     @classmethod
     def load(cls, cur: Cursor, key: int) -> 'Security':

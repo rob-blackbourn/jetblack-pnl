@@ -86,9 +86,9 @@ def save_pnl(
         SET
             valid_to = ?
         WHERE
-            ticker = ?
+            security_id = ?
         AND
-            book = ?
+            book_id = ?
         AND
             valid_from <= ?
         AND
@@ -101,8 +101,8 @@ def save_pnl(
         """
         INSERT INTO pnl
         (
-            ticker,
-            book,
+            security_id,
+            book_id,
             quantity,
             cost,
             realized,
