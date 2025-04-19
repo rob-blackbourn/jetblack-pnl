@@ -45,8 +45,8 @@ class MatchedPool(IMatchedPool):
             )
             """,
             (
-                cast(Trade, opening.trade).trade_id,
-                cast(Trade, closing.trade).trade_id,
+                cast(Trade, opening.trade).key,
+                cast(Trade, closing.trade).key,
                 cast(Trade, closing.trade).timestamp,
                 MAX_VALID_TO
             )
@@ -85,7 +85,7 @@ class UnmatchedPool:
                 )
                 """,
                 (
-                    market_trade.trade_id,
+                    market_trade.key,
                     opening.quantity,
                     market_trade.timestamp,
                     MAX_VALID_TO

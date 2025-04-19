@@ -9,20 +9,22 @@ from typing import Optional
 from sqlite3 import Cursor
 
 from ...core import ITrade, ISecurity, IBook
+from .security import Security
+from .book import Book
 
 
-class Trade(ITrade):
+class Trade(ITrade[int]):
 
     def __init__(
         self,
-        trade_id: int,
+        trade_key: int,
         timestamp: datetime,
         security: ISecurity[int],
         book: IBook[int],
         quantity: Decimal,
         price: Decimal,
     ) -> None:
-        self._trade_id = trade_id
+        self._trade_id = trade_key
         self._timestamp = timestamp
         self._security = security
         self._book = book
@@ -30,7 +32,7 @@ class Trade(ITrade):
         self._price = price
 
     @property
-    def trade_id(self) -> int:
+    def key(self) -> int:
         return self._trade_id
 
     @property
@@ -54,10 +56,10 @@ class Trade(ITrade):
         return self._price
 
     def __repr__(self) -> str:
-        return f"[{self.trade_id}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
+        return f"[{self.key}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
 
     @classmethod
-    def read(cls, cur: Cursor, trade_id: int) -> Optional[Trade]:
+    def read(cls, cur: Cursor, trade_key: int) -> Optional[Trade]:
         cur.execute(
             """
             SELECT
@@ -69,15 +71,17 @@ class Trade(ITrade):
             FROM
                 trade
             WHERE
-                trade_id = ?
+                trade_key = ?
             """,
-            (trade_id,)
+            (trade_key,)
         )
         row = cur.fetchone()
         if row is None:
             return None
         (timestamp, security_key, book_key, quantity, price) = row
-        return Trade(trade_id, timestamp, ticker, book, quantity, price)
+        security = Security.load(cur, security_key)
+        book = Book.load(cur, book_key)
+        return Trade(trade_key, timestamp, security, book, quantity, price)
 
     @classmethod
     def create(
@@ -96,10 +100,10 @@ class Trade(ITrade):
             """,
             (timestamp, security.key, book.key, quantity, price)
         )
-        trade_id = cur.lastrowid
-        assert (trade_id is not None)
+        trade_key = cur.lastrowid
+        assert (trade_key is not None)
         trade = Trade(
-            trade_id,
+            trade_key,
             timestamp,
             security,
             book,

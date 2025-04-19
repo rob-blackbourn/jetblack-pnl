@@ -1,4 +1,4 @@
-from sqlite3 import Connection
+from sqlite3 import Connection, Cursor
 
 from ...core import IBook
 
@@ -22,8 +22,7 @@ class Book(IBook[int]):
         return self._name
 
     @classmethod
-    def load(cls, con: Connection, key: int) -> 'Book':
-        cur = con.cursor()
+    def load(cls, cur: Cursor, key: int) -> 'Book':
         cur.execute(
             """
             SELECT

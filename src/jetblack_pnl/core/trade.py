@@ -2,12 +2,18 @@
 """
 
 from decimal import Decimal
-from typing import Protocol, runtime_checkable
+from typing import Protocol, TypeVar, runtime_checkable
+
+TTradeKey = TypeVar('TTradeKey')
 
 
 @runtime_checkable
-class ITrade(Protocol):
+class ITrade(Protocol[TTradeKey]):  # type: ignore
     """A trade interface"""
+
+    @property
+    def key(self) -> TTradeKey:
+        """A unique id for the trade"""
 
     @property
     def quantity(self) -> Decimal:

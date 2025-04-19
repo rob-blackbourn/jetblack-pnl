@@ -36,8 +36,7 @@ class Security(ISecurity[int]):
         return self._is_cash
 
     @classmethod
-    def load(cls, con: Connection, key: int) -> 'Security':
-        cur = con.cursor()
+    def load(cls, cur: Cursor, key: int) -> 'Security':
         cur.execute(
             """
             SELECT
