@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from decimal import Decimal
 from sqlite3 import Cursor
 from typing import cast, Sequence
@@ -52,7 +51,7 @@ class UnmatchedPool:
                 (
                     market_trade.key,
                     opening.quantity,
-                    market_trade.timestamp,
+                    market_trade.key,
                     MAX_VALID_TO
                 )
             )
@@ -62,11 +61,9 @@ class UnmatchedPool:
 
         def pop(self, closing: SplitTrade[int]) -> SplitTrade[int]:
             # Find the oldest unmatched trade that is in the valid window.
-            timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
                 """
                 SELECT
-                    t.timestamp,
                     t.trade_id,
                     ut.quantity,
                     ut.valid_from
@@ -86,12 +83,12 @@ class UnmatchedPool:
                 LIMIT
                     1;
                 """,
-                (timestamp, MAX_VALID_TO)
+                (closing.trade.key, MAX_VALID_TO)
             )
             row = self._cur.fetchone()
             if row is None:
                 raise RuntimeError("no unmatched trades")
-            timestamp, trade_id, quantity, valid_from = row
+            trade_id, quantity, valid_from = row
 
             # Remove from unmatched by setting the valid_to to the trade's
             # timestamp
@@ -111,7 +108,7 @@ class UnmatchedPool:
                     valid_to = ?
                 """,
                 (
-                    timestamp,
+                    closing.trade.key,
                     trade_id,
                     quantity,
                     valid_from,
@@ -125,7 +122,6 @@ class UnmatchedPool:
             return pnl_trade
 
         def has(self, closing: SplitTrade[int]) -> bool:
-            timestamp = cast(Trade, closing.trade).timestamp
             self._cur.execute(
                 """
                 SELECT
@@ -146,8 +142,8 @@ class UnmatchedPool:
                 (
                     self._security.key,
                     self._book.key,
-                    timestamp,
-                    timestamp
+                    closing.trade.key,
+                    closing.trade.key
                 )
             )
             row = self._cur.fetchone()
@@ -155,7 +151,10 @@ class UnmatchedPool:
             (count,) = row
             return count != 0
 
-        def pool_asof(self, asof: datetime) -> Sequence[SplitTrade[int]]:
+        def pool_asof(
+                self,
+                last_trade_id: int
+        ) -> Sequence[SplitTrade[int]]:
             self._cur.execute(
                 """
                 SELECT
@@ -174,7 +173,7 @@ class UnmatchedPool:
                 AND
                     ut.valid_from <= ? AND ? < ut.valid_to
                 """,
-                (self._security.key, self._book.key, asof, MAX_VALID_TO)
+                (self._security.key, self._book.key, last_trade_id, MAX_VALID_TO)
             )
 
             def make_unmatched(
@@ -192,4 +191,20 @@ class UnmatchedPool:
 
         @property
         def pool(self) -> Sequence[SplitTrade[int]]:
-            return self.pool_asof(datetime.now())
+            self._cur.execute(
+                """
+                SELECT
+                    MAX(trade_id) AS last_trade_id
+                FROM
+                    trade
+                WHERE
+                    security_id = ?
+                AND
+                    book_id = ?
+                """,
+                (self._security.key, self._book.key)
+            )
+            last_trade_id = self._cur.fetchone()
+            if last_trade_id is None:
+                return ()
+            return self.pool_asof(last_trade_id)

@@ -42,8 +42,8 @@ def create_table_pnl(cur: Cursor) -> None:
             cost        DECIMAL(18, 6)  NOT NULL,
             realized    DECIMAL(18, 6)  NOT NULL,
 
-            valid_from  DATETIME        NOT NULL,
-            valid_to    DATETIME        NOT NULL,
+            valid_from  INT             NOT NULL,
+            valid_to    INT             NOT NULL,
 
             PRIMARY KEY(valid_from, valid_to, security_id, book_id)
             FOREIGN KEY (security_id) REFERENCES security(security_id),
@@ -80,8 +80,8 @@ def create_table_unmatched_trade(cur: Cursor) -> None:
             trade_id    INTEGER         NOT NULL,
             quantity    DECIMAL         NOT NULL,
 
-            valid_from  DATETIME        NOT NULL,
-            valid_to    DATETIME        NOT NULL,
+            valid_from  INT             NOT NULL,
+            valid_to    INT             NOT NULL,
 
             PRIMARY KEY (valid_from, valid_to, trade_id, quantity),
             FOREIGN KEY (trade_id) REFERENCES trade(trade_id)
@@ -98,8 +98,8 @@ def create_table_matched_trade(cur: Cursor) -> None:
             opening_trade_id    INTEGER     NOT NULL,
             closing_trade_id    INTEGER     NOT NULL,
 
-            valid_from          DATETIME    NOT NULL,
-            valid_to            DATETIME    NOT NULL,
+            valid_from          INT         NOT NULL,
+            valid_to            INT         NOT NULL,
 
             PRIMARY KEY(valid_from, valid_to, opening_trade_id, closing_trade_id),
 

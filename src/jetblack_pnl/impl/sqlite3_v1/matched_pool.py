@@ -1,8 +1,7 @@
 """Matched and unmatched pools"""
 
-from datetime import datetime
 from sqlite3 import Cursor
-from typing import cast, Sequence
+from typing import Sequence
 
 from ...core import (
     SplitTrade,
@@ -49,14 +48,14 @@ class MatchedPool(IMatchedPool[int]):
             (
                 opening.trade.key,
                 closing.trade.key,
-                cast(Trade, closing.trade).timestamp,
+                closing.trade.key,
                 MAX_VALID_TO
             )
         )
 
     def pool_asof(
             self,
-            asof: datetime
+            last_trade_id: int
     ) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
         self._cur.execute(
             """
@@ -98,7 +97,7 @@ class MatchedPool(IMatchedPool[int]):
             AND
                 valid_to = ?
             """,
-            (self._security.key, self._book.key, asof, asof)
+            (self._security.key, self._book.key, last_trade_id, last_trade_id)
         )
 
         def make_match(
@@ -121,4 +120,20 @@ class MatchedPool(IMatchedPool[int]):
 
     @property
     def pool(self) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
-        return self.pool_asof(datetime.now())
+        self._cur.execute(
+            """
+            SELECT
+                MAX(trade_id) AS last_trade_id
+            FROM
+                trade
+            WHERE
+                security_id = ?
+            AND
+                book_id = ?
+            """,
+            (self._security.key, self._book.key)
+        )
+        last_trade_id = self._cur.fetchone()
+        if last_trade_id is None:
+            return ()
+        return self.pool_asof(last_trade_id)

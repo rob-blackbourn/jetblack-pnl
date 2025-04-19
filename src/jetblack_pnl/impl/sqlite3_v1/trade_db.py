@@ -1,10 +1,5 @@
 """A basic database implementation"""
 
-from __future__ import annotations
-
-from datetime import datetime
-from decimal import Decimal
-
 from sqlite3 import Connection
 
 from ...core import TradingPnl, add_trade, ISecurity, IBook, ITrade
@@ -23,21 +18,20 @@ class TradeDb:
 
     def add_trade(
         self,
-        timestamp: datetime,
         security: ISecurity[int],
         book: IBook[int],
         trade: ITrade[int],
     ) -> TradingPnl:
         cur = self._con.cursor()
         try:
-            ensure_pnl(cur, security, book, timestamp)
+            ensure_pnl(cur, security, book, trade.key)
 
             matched = MatchedPool(cur, security, book)
             unmatched = UnmatchedPool.Fifo(cur, security, book)
-            pnl = select_pnl(cur, security, book, timestamp)
+            pnl = select_pnl(cur, security, book, trade.key)
 
             pnl = add_trade(pnl, trade, security, unmatched, matched)
-            save_pnl(cur, pnl, security, book, timestamp)
+            save_pnl(cur, pnl, security, book, trade.key)
             self._con.commit()
             return pnl
         finally:

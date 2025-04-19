@@ -1,20 +1,19 @@
 """SQL statements"""
 
-from datetime import datetime
 from decimal import Decimal
 from sqlite3 import Cursor
 from typing import Sequence
 
 from ...core import TradingPnl, ISecurity, IBook
 
-MAX_VALID_TO = datetime(9999, 12, 31, 23, 59, 59)
+MAX_VALID_TO = 2 ** 63 - 1
 
 
 def ensure_pnl(
         cur: Cursor,
         security: ISecurity[int],
         book: IBook[int],
-        timestamp: datetime
+        last_trade_id: int
 ) -> None:
     # There should be no pnl on or after this timestamp.
     cur.execute(
@@ -30,7 +29,7 @@ def ensure_pnl(
         AND
             valid_from >= ?;
         """,
-        (security.key, book.key, timestamp)
+        (security.key, book.key, last_trade_id)
     )
     row = cur.fetchone()
     assert (row is not None)
@@ -43,7 +42,7 @@ def select_pnl(
         cur: Cursor,
         security: ISecurity[int],
         book: IBook[int],
-        timestamp: datetime
+        last_trade_id: int
 ) -> TradingPnl:
     cur.execute(
         """
@@ -62,7 +61,7 @@ def select_pnl(
         AND
             valid_to = ?
         """,
-        (security.key, book.key, timestamp, MAX_VALID_TO)
+        (security.key, book.key, last_trade_id, MAX_VALID_TO)
     )
     row = cur.fetchone()
     if row is None:
@@ -77,7 +76,7 @@ def save_pnl(
         pnl: TradingPnl,
         security: ISecurity[int],
         book: IBook[int],
-        timestamp: datetime
+        last_trade_id: int
 ) -> None:
     cur.execute(
         """
@@ -94,7 +93,7 @@ def save_pnl(
         AND
             valid_to = ?;
         """,
-        (timestamp, security.key, book.key, timestamp, MAX_VALID_TO)
+        (last_trade_id, security.key, book.key, last_trade_id, MAX_VALID_TO)
     )
 
     cur.execute(
@@ -124,7 +123,7 @@ def save_pnl(
             pnl.quantity,
             pnl.cost,
             pnl.realized,
-            timestamp,
+            last_trade_id,
             MAX_VALID_TO
         )
     )
@@ -132,7 +131,7 @@ def save_pnl(
 
 def pnl_report(
         cur: Cursor,
-        timestamp: datetime
+        last_trade_id: int
 ) -> Sequence[tuple[str, str, TradingPnl]]:
     cur.execute(
         """
@@ -157,7 +156,7 @@ def pnl_report(
         AND
             valid_to = ?
         """,
-        (timestamp, MAX_VALID_TO)
+        (last_trade_id, MAX_VALID_TO)
     )
     return [
         (security,  book, TradingPnl(quantity, cost, realized))
