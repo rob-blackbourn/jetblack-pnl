@@ -9,6 +9,33 @@ from ...core import TradingPnl, ISecurity, IBook
 MAX_VALID_TO = 2 ** 63 - 1
 
 
+def has_pnl(
+        cur: Cursor,
+        security: ISecurity[int],
+        book: IBook[int]
+) -> bool:
+    # There should be no pnl on or after this timestamp.
+    cur.execute(
+        """
+        SELECT
+            COUNT(*) AS count
+        FROM
+            pnl
+        WHERE
+            security_id = ?
+        AND
+            book_id = ?
+        AND
+            valid_to = ?;
+        """,
+        (security.key, book.key, MAX_VALID_TO)
+    )
+    row = cur.fetchone()
+    assert (row is not None)
+    (count,) = row
+    return count != 0
+
+
 def ensure_pnl(
         cur: Cursor,
         security: ISecurity[int],

@@ -5,7 +5,7 @@ from typing import Protocol
 from .book import IBook, TBookKey
 from .matched_pool import IMatchedPool
 from .security import ISecurity, TSecurityKey
-from .trade import TTradeKey
+from .trade import ITrade, TTradeKey
 from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
@@ -30,6 +30,7 @@ class IPnlBookStore(Protocol[TSecurityKey, TBookKey, TTradeKey]):  # type: ignor
             self,
             security: ISecurity[TSecurityKey],
             book: IBook[TBookKey],
+            trade: ITrade[TTradeKey],
             pnl: TradingPnl,
             unmatched: IUnmatchedPool[TTradeKey],
             matched: IMatchedPool[TTradeKey]

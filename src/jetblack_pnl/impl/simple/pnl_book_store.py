@@ -6,7 +6,8 @@ from ...core import (
     IUnmatchedPool,
     IMatchedPool,
     ISecurity,
-    IBook
+    IBook,
+    ITrade
 )
 
 SecurityKey: TypeAlias = str
@@ -42,6 +43,7 @@ class PnlBookStore(IPnlBookStore[str, str, int | None]):
             self,
             security: ISecurity[SecurityKey],
             book: IBook[BookKey],
+            trade: ITrade,
             pnl: TradingPnl,
             unmatched: IUnmatchedPool[TradeKey],
             matched: IMatchedPool[TradeKey]
