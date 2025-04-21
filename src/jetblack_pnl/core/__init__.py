@@ -4,6 +4,7 @@ from .algorithm import add_trade
 from .book import TBookKey, IBook
 from .matched_pool import IMatchedPool
 from .pnl_book import PnlBook
+from .pnl_book_store import IPnlBookStore
 from .pnl_strip import PnlStrip
 from .security import TSecurityKey, ISecurity
 from .split_trade import SplitTrade
@@ -20,6 +21,7 @@ __all__ = [
     'IMatchedPool',
 
     'PnlBook',
+    'IPnlBookStore',
 
     'PnlStrip',
 

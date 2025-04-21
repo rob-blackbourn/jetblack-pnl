@@ -6,14 +6,19 @@ from jetblack_pnl.impl.simple import (
     UnmatchedPool,
     Security,
     Book,
-    Trade
+    Trade,
+    PnlBookStore
 )
 
 
 def test_fifo() -> None:
     """Test the FIFO implementation of the SimplePnl class."""
 
-    pnl_book = PnlBook[str, str, int | None](MatchedPool, UnmatchedPool.Fifo)
+    pnl_book = PnlBook[str, str, int | None](
+        PnlBookStore(),
+        MatchedPool,
+        UnmatchedPool.Fifo
+    )
     tech = Book('tech')
     apple = Security('AAPL', 1000, False)
 
