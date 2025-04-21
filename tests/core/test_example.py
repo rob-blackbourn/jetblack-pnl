@@ -16,8 +16,8 @@ def test_fifo() -> None:
 
     pnl_book = PnlBook[str, str, int | None, None](
         PnlBookStore(),
-        lambda security, book: MatchedPool(),
-        lambda security, book: UnmatchedPool.Fifo()
+        lambda security, book, context: MatchedPool(),
+        lambda security, book, context: UnmatchedPool.Fifo()
     )
     tech = Book('tech')
     apple = Security('AAPL', 1000, False)
