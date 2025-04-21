@@ -17,13 +17,12 @@
     ```bash
     python -m pip install --upgrade pip
     pip install build twine
-    pip install -r requirements-test.txt
     ```
 
 4. Install the project locally.
 
     ```bash
-    pip install --editable .
+    pip install --editable '.[dev]'
     ```
 
 ## Publishing

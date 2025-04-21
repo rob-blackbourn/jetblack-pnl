@@ -17,6 +17,15 @@ classifiers = [
 ]
 readme = "README.md"
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "coverage",
+    "autopep8",
+    "pylint",
+    "mypy"
+]
+
 [project.urls]
 Homepage = "https://github.com/rob-blackbourn/jetblack-pnl"
 Issues = "https://github.com/rob-blackbourn/jetblack-pnl/issues"
