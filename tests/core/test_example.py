@@ -13,7 +13,7 @@ from jetblack_pnl.impl.simple import (
 def test_fifo() -> None:
     """Test the FIFO implementation of the SimplePnl class."""
 
-    pnl_book = PnlBook[str, str](MatchedPool, UnmatchedPool.Fifo)
+    pnl_book = PnlBook[str, str, int | None](MatchedPool, UnmatchedPool.Fifo)
     tech = Book('tech')
     apple = Security('AAPL', 1000, False)
 

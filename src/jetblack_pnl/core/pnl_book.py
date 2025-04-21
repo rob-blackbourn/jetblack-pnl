@@ -1,7 +1,7 @@
 """A simple implementation of a PnL book"""
 
 from decimal import Decimal
-from typing import Callable, Generic
+from typing import Callable, Generic, Protocol
 
 from .algorithm import add_trade
 
@@ -13,19 +13,29 @@ from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
 
-class PnlBook(Generic[TSecurityKey, TBookKey]):
+class IPnlBookStore(Protocol[TSecurityKey, TBookKey, TTradeKey]):  # type: ignore
+
+    def get(
+            self,
+            security: ISecurity[TSecurityKey],
+            book: IBook[TBookKey]
+    ) -> tuple[TradingPnl, IUnmatchedPool, IMatchedPool]:
+        pass
+
+
+class PnlBook(Generic[TSecurityKey, TBookKey, TTradeKey]):
     """A simple implementation of a PnL book"""
 
     def __init__(
             self,
-            matched_factory: Callable[[], IMatchedPool],
-            unmatched_factory: Callable[[], IUnmatchedPool]
+            matched_factory: Callable[[], IMatchedPool[TTradeKey]],
+            unmatched_factory: Callable[[], IUnmatchedPool[TTradeKey]]
     ) -> None:
         self._matched_factory = matched_factory
         self._unmatched_factory = unmatched_factory
         self._cache: dict[
             tuple[TSecurityKey, TBookKey],
-            tuple[TradingPnl, IUnmatchedPool, IMatchedPool]
+            tuple[TradingPnl, IUnmatchedPool[TTradeKey], IMatchedPool[TTradeKey]]
         ] = {}
 
     def add_trade(
