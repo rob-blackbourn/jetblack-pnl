@@ -14,24 +14,23 @@ from .trade import Trade
 from .pnl import MAX_VALID_TO
 
 
-class MatchedPool(IMatchedPool[int]):
+class MatchedPool(IMatchedPool[int, Cursor]):
 
     def __init__(
             self,
-            cur: Cursor,
             security: ISecurity[int],
             book: IBook[int]
     ) -> None:
-        self._cur = cur
         self._security = security
         self._book = book
 
     def append(
             self,
             opening: SplitTrade[int],
-            closing: SplitTrade[int]
+            closing: SplitTrade[int],
+            context: Cursor
     ) -> None:
-        self._cur.execute(
+        context.execute(
             """
             INSERT INTO matched_trade(
                 opening_trade_id,
@@ -55,9 +54,10 @@ class MatchedPool(IMatchedPool[int]):
 
     def pool_asof(
             self,
-            last_trade_id: int
+            last_trade_id: int,
+            context: Cursor
     ) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
-        self._cur.execute(
+        context.execute(
             """
             SELECT
                 mt.opening_trade_id,
@@ -102,11 +102,12 @@ class MatchedPool(IMatchedPool[int]):
 
         def make_match(
                 opening_trade_id: int,
-                closing_trade_id: int
+                closing_trade_id: int,
+                context: Cursor
         ) -> tuple[SplitTrade[int], SplitTrade[int]]:
-            opening_trade = Trade.load(self._cur, opening_trade_id)
+            opening_trade = Trade.load(context, opening_trade_id)
             assert opening_trade is not None
-            closing_trade = Trade.load(self._cur, closing_trade_id)
+            closing_trade = Trade.load(context, closing_trade_id)
             assert closing_trade is not None
             return (
                 SplitTrade(opening_trade.quantity, opening_trade),
@@ -114,13 +115,12 @@ class MatchedPool(IMatchedPool[int]):
             )
 
         return tuple(
-            make_match(opening_trade_id, closing_trade_id)
-            for opening_trade_id, closing_trade_id in self._cur.fetchall()
+            make_match(opening_trade_id, closing_trade_id, context)
+            for opening_trade_id, closing_trade_id in context.fetchall()
         )
 
-    @property
-    def pool(self) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
-        self._cur.execute(
+    def pool(self, context: Cursor) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
+        context.execute(
             """
             SELECT
                 MAX(trade_id) AS last_trade_id
@@ -133,7 +133,7 @@ class MatchedPool(IMatchedPool[int]):
             """,
             (self._security.key, self._book.key)
         )
-        last_trade_id = self._cur.fetchone()
+        last_trade_id = context.fetchone()
         if last_trade_id is None:
             return ()
-        return self.pool_asof(last_trade_id)
+        return self.pool_asof(last_trade_id, context)

@@ -19,22 +19,20 @@ from .pnl import MAX_VALID_TO
 
 class UnmatchedPool:
 
-    class Fifo(IUnmatchedPool[int]):
+    class Fifo(IUnmatchedPool[int, Cursor]):
 
         def __init__(
                 self,
-                cur: Cursor,
                 security: ISecurity[int],
                 book: IBook[int]
         ) -> None:
-            self._cur = cur
             self._security = security
             self._book = book
 
-        def append(self, opening: SplitTrade[int]) -> None:
+        def append(self, opening: SplitTrade[int], context: Cursor) -> None:
             market_trade = cast(Trade, opening.trade)
 
-            self._cur.execute(
+            context.execute(
                 """
                 INSERT INTO unmatched_trade(
                     trade_id,
@@ -56,12 +54,12 @@ class UnmatchedPool:
                 )
             )
 
-        def insert(self, opening: SplitTrade[int]) -> None:
-            self.append(opening)
+        def insert(self, opening: SplitTrade[int], context: Cursor) -> None:
+            self.append(opening, context)
 
-        def pop(self, closing: SplitTrade[int]) -> SplitTrade[int]:
+        def pop(self, closing: SplitTrade[int], context: Cursor) -> SplitTrade[int]:
             # Find the oldest unmatched trade that is in the valid window.
-            self._cur.execute(
+            context.execute(
                 """
                 SELECT
                     t.trade_id,
@@ -85,14 +83,14 @@ class UnmatchedPool:
                 """,
                 (closing.trade.key, MAX_VALID_TO)
             )
-            row = self._cur.fetchone()
+            row = context.fetchone()
             if row is None:
                 raise RuntimeError("no unmatched trades")
             trade_id, quantity, valid_from = row
 
             # Remove from unmatched by setting the valid_to to the trade's
             # timestamp
-            self._cur.execute(
+            context.execute(
                 """
                 update
                     unmatched_trade
@@ -115,14 +113,14 @@ class UnmatchedPool:
                     MAX_VALID_TO
                 )
             )
-            market_trade = Trade.load(self._cur, trade_id)
+            market_trade = Trade.load(context, trade_id)
             if market_trade is None:
                 raise RuntimeError("unable to find market trade")
             pnl_trade = SplitTrade(quantity, market_trade)
             return pnl_trade
 
-        def has(self, closing: SplitTrade[int]) -> bool:
-            self._cur.execute(
+        def has(self, closing: SplitTrade[int], context: Cursor) -> bool:
+            context.execute(
                 """
                 SELECT
                     COUNT(ut.trade_id) AS count
@@ -146,16 +144,17 @@ class UnmatchedPool:
                     closing.trade.key
                 )
             )
-            row = self._cur.fetchone()
+            row = context.fetchone()
             assert (row is not None)
             (count,) = row
             return count != 0
 
         def pool_asof(
                 self,
-                last_trade_id: int
+                last_trade_id: int,
+                context: Cursor
         ) -> Sequence[SplitTrade[int]]:
-            self._cur.execute(
+            context.execute(
                 """
                 SELECT
                     trade_id,
@@ -178,20 +177,20 @@ class UnmatchedPool:
 
             def make_unmatched(
                     trade_id: int,
-                    quantity: Decimal
+                    quantity: Decimal,
+                    context: Cursor
             ) -> SplitTrade[int]:
-                trade = Trade.load(self._cur, trade_id)
+                trade = Trade.load(context, trade_id)
                 assert trade is not None
                 return SplitTrade(quantity, trade)
 
             return tuple(
-                make_unmatched(trade_id, quantity)
-                for trade_id, quantity in self._cur.fetchall()
+                make_unmatched(trade_id, quantity, context)
+                for trade_id, quantity in context.fetchall()
             )
 
-        @property
-        def pool(self) -> Sequence[SplitTrade[int]]:
-            self._cur.execute(
+        def pool(self, context: Cursor) -> Sequence[SplitTrade[int]]:
+            context.execute(
                 """
                 SELECT
                     MAX(trade_id) AS last_trade_id
@@ -204,7 +203,7 @@ class UnmatchedPool:
                 """,
                 (self._security.key, self._book.key)
             )
-            last_trade_id = self._cur.fetchone()
+            last_trade_id = context.fetchone()
             if last_trade_id is None:
                 return ()
-            return self.pool_asof(last_trade_id)
+            return self.pool_asof(last_trade_id, context)

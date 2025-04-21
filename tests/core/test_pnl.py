@@ -24,31 +24,31 @@ def test_long_to_short_with_splits_best_price():
     assert pnl.realized == 0
 
     # Buy 6 @ 100
-    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 6
     assert pnl.cost == -600
     assert pnl.realized == 0
 
     # Buy 6 @ 106
-    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched, None)
     assert pnl.quantity == 12
     assert pnl.cost == -1236
     assert pnl.realized == 0
 
     # Buy 6 @ 103
-    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched, None)
     assert pnl.quantity == 18
     assert pnl.cost == -1854
     assert pnl.realized == 0
 
     # Sell 9 @ 105
-    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched, None)
     assert pnl.quantity == 9
     assert pnl.cost == -945
     assert pnl.realized == 36
 
     # Sell 9 @ 107
-    pnl = add_trade(pnl, Trade(-9, 107), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-9, 107), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == 54
@@ -63,25 +63,25 @@ def test_long_to_short_with_splits_worst_price():
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
     # Buy 6 at 100
-    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 6
     assert pnl.cost == -600
     assert pnl.realized == 0
 
     # Buy 6 @ 106
-    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched, None)
     assert pnl.quantity == 12
     assert pnl.cost == -1236
     assert pnl.realized == 0
 
     # Buy 6 @ 103
-    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched, None)
     assert pnl.quantity == 18
     assert pnl.cost == -1854
     assert pnl.realized == 0
 
     # Sell 9 @ 105
-    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched, None)
     assert pnl.quantity == 9
     assert pnl.cost == -909
     assert pnl.realized == 0
@@ -96,25 +96,25 @@ def test_long_to_short_with_splits_fifo():
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
     # Buy 6 @ 100
-    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 6
     assert pnl.cost == -600
     assert pnl.realized == 0
 
     # Buy 6 @ 106
-    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched, None)
     assert pnl.quantity == 12
     assert pnl.cost == -1236
     assert pnl.realized == 0
 
     # Buy 6 @ 103
-    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched, None)
     assert pnl.quantity == 18
     assert pnl.cost == -1854
     assert pnl.realized == 0
 
     # Sell 9 @ 105
-    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched, None)
     assert pnl.quantity == 9
     assert pnl.cost == -936
     assert pnl.realized == 27
@@ -129,25 +129,25 @@ def test_long_to_short_with_splits_lifo():
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
     # Buy 6 @ 100
-    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 6
     assert pnl.cost == -600
     assert pnl.realized == 0
 
     # Buy 6 @ 106
-    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 106), sec, unmatched, matched, None)
     assert pnl.quantity == 12
     assert pnl.cost == -1236
     assert pnl.realized == 0
 
     # Buy 6 @ 103
-    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(6, 103), sec, unmatched, matched, None)
     assert pnl.quantity == 18
     assert pnl.cost == -1854
     assert pnl.realized == 0
 
     # Sell 9 @ 105
-    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-9, 105), sec, unmatched, matched, None)
     assert pnl.quantity == 9
     assert pnl.cost == -918
     assert pnl.realized == 9
@@ -161,8 +161,8 @@ def test_long_to_short_fifo_with_profit():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == 2
@@ -184,8 +184,8 @@ def test_short_to_long_fifo_with_profit():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == 2
@@ -206,8 +206,8 @@ def test_long_to_short_fifo_with_loss():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == -2
@@ -228,8 +228,8 @@ def test_short_to_long_fifo_with_loss():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == -2
@@ -249,8 +249,8 @@ def test_long_sell_fifo_through_flat():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-2, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-2, 102), sec, unmatched, matched, None)
     assert pnl.quantity == -1
     assert pnl.cost == 102
     assert pnl.realized == 1
@@ -272,8 +272,8 @@ def test_short_buy_fifo_through_flat():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(2, 101), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(2, 101), sec, unmatched, matched, None)
     assert pnl.quantity == 1
     assert pnl.cost == -101
     assert pnl.realized == 1
@@ -295,12 +295,12 @@ def test_one_buy_many_sells_fifo():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(10, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-5, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(10, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-5, 102), sec, unmatched, matched, None)
     assert pnl.quantity == 5
     assert pnl.cost == -505
     assert pnl.realized == 5
-    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
     assert pnl.quantity == 0
     assert pnl.cost == 0
     assert pnl.realized == 20
@@ -325,28 +325,28 @@ def test_pnl():
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
     # Buy 10 @ 100
-    pnl = add_trade(pnl, Trade(10, 100), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(10, 100), sec, unmatched, matched, None)
     assert pnl.strip(sec, 100) == (10, 100, 100, 0, 0)
 
     # What is the P&L if the price goes to 102?
     assert pnl.strip(sec, 102) == (10, 100.0, 102, 0, 20)
 
     # What if we buy another 5 at 102?
-    pnl = add_trade(pnl, Trade(10, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(10, 102), sec, unmatched, matched, None)
     assert pnl.strip(sec, 102) == (20, 101.0, 102, 0, 20)
 
     # What is the P&L if the price goes to 104?
     assert pnl.strip(sec, 104) == (20, 101.0, 104, 0, 60)
 
     # What if we sell 10 at 104?
-    pnl = add_trade(pnl, Trade(-10, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-10, 104), sec, unmatched, matched, None)
     assert pnl.strip(sec, 104) == (10, 102.0, 104, 40, 20)
 
     # What if the price drops to 102?
     assert pnl.strip(sec, 102) == (10, 102.0, 102, 40, 0)
 
     # What if we sell 10 at 102?
-    pnl = add_trade(pnl, Trade(-10, 102), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-10, 102), sec, unmatched, matched, None)
     assert pnl.strip(sec, 102) == (0, 0, 102, 40, 0)
 
 
@@ -357,12 +357,12 @@ def test_many_buys_one_sell_fifo():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
     assert matched == MatchedPool((
         (
             SplitTrade(Decimal(1), Trade(1, 100)),
@@ -394,12 +394,12 @@ def test_many_buys_one_sell_lifo():
     unmatched = UnmatchedPool.Lifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
     assert matched == MatchedPool((
         (
             SplitTrade(Decimal(1), Trade(1, 103)),
@@ -431,12 +431,12 @@ def test_many_buys_one_sell_best_price():
     unmatched = UnmatchedPool.BestPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
     assert matched == MatchedPool((
         (
             SplitTrade(Decimal(1), Trade(1, 100)),
@@ -468,12 +468,12 @@ def test_many_sells_one_buy_best_price():
     unmatched = UnmatchedPool.BestPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched, None)
 
     expected = MatchedPool((
         (
@@ -508,12 +508,12 @@ def test_many_buys_one_sell_worst_price():
     unmatched = UnmatchedPool.WorstPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
 
     expected = MatchedPool((
         (
@@ -548,12 +548,12 @@ def test_many_sells_one_buy_worst_price():
     unmatched = UnmatchedPool.WorstPrice()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 101), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 104), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade(-1, 100), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 102), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 101), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 104), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched, None)
 
     expected = MatchedPool((
         (
@@ -587,8 +587,8 @@ def test_fraction_quantities():
     unmatched = UnmatchedPool.Fifo()
     pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
 
-    pnl = add_trade(pnl, Trade("10.17", "2.54"), sec, unmatched, matched)
-    pnl = add_trade(pnl, Trade("-8.17", "2.12"), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade("10.17", "2.54"), sec, unmatched, matched, None)
+    pnl = add_trade(pnl, Trade("-8.17", "2.12"), sec, unmatched, matched, None)
     assert pnl.quantity == 2
-    pnl = add_trade(pnl, Trade("-1.5", "2.05"), sec, unmatched, matched)
+    pnl = add_trade(pnl, Trade("-1.5", "2.05"), sec, unmatched, matched, None)
     assert pnl.quantity == Decimal("0.5")

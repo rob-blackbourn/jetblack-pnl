@@ -1,6 +1,6 @@
 """A basic database implementation"""
 
-from sqlite3 import Connection
+from sqlite3 import Connection, Cursor
 
 from ...core import (
     TradingPnl,
@@ -17,12 +17,12 @@ from .tables import create_tables, drop_tables
 from .pnl_book_store import PnlBookStore
 
 
-class DbPnlBook(PnlBook[int, int, int]):
+class DbPnlBook(PnlBook[int, int, int, Cursor]):
 
     def __init__(self, con: Connection) -> None:
         self._con = con
         super().__init__(
-            PnlBookStore(con),
+            PnlBookStore(),
             self._make_matched,
             self._make_unmatched
         )
@@ -31,16 +31,18 @@ class DbPnlBook(PnlBook[int, int, int]):
     def _make_matched(
             self,
             security: ISecurity[int],
-            book: IBook[int]
-    ) -> IMatchedPool[int]:
-        return MatchedPool(self._con.cursor(), security, book)
+            book: IBook[int],
+            context: Cursor
+    ) -> IMatchedPool[int, Cursor]:
+        return MatchedPool(security, book)
 
     def _make_unmatched(
             self,
             security: ISecurity[int],
-            book: IBook[int]
-    ) -> IUnmatchedPool[int]:
-        return UnmatchedPool.Fifo(self._con.cursor(), security, book)
+            book: IBook[int],
+            context: Cursor
+    ) -> IUnmatchedPool[int, Cursor]:
+        return UnmatchedPool.Fifo(security, book)
 
     def create_tables(self) -> None:
         cur = self._con.cursor()

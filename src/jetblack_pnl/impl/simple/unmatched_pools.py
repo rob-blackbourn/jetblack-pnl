@@ -7,22 +7,22 @@ from ...core import SplitTrade, IUnmatchedPool
 
 class UnmatchedPool:
 
-    class Fifo(IUnmatchedPool):
+    class Fifo(IUnmatchedPool[int | None, None]):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade) -> None:
+        def insert(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, _closing: SplitTrade) -> SplitTrade:
+        def pop(self, _closing: SplitTrade, context: None) -> SplitTrade:
             trade, self._pool = (self._pool[0], self._pool[1:])
             return trade
 
-        def has(self, _closing: SplitTrade) -> bool:
+        def has(self, _closing: SplitTrade, context: None) -> bool:
             return len(self._pool) > 0
 
         @property
@@ -45,22 +45,22 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class Lifo(IUnmatchedPool):
+    class Lifo(IUnmatchedPool[int | None, None]):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade) -> None:
+        def insert(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, _closing: SplitTrade) -> SplitTrade:
+        def pop(self, _closing: SplitTrade, context: None) -> SplitTrade:
             trade, self._pool = (self._pool[-1], self._pool[:-1])
             return trade
 
-        def has(self, _closing: SplitTrade) -> bool:
+        def has(self, _closing: SplitTrade, context: None) -> bool:
             return len(self._pool) > 0
 
         @property
@@ -83,18 +83,18 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class BestPrice(IUnmatchedPool):
+    class BestPrice(IUnmatchedPool[int | None, None]):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade) -> None:
+        def insert(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, closing: SplitTrade) -> SplitTrade:
+        def pop(self, closing: SplitTrade, context: None) -> SplitTrade:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[0], self._pool[1:])
@@ -103,7 +103,7 @@ class UnmatchedPool:
             )
             return trade
 
-        def has(self, _closing: SplitTrade) -> bool:
+        def has(self, _closing: SplitTrade, context: None) -> bool:
             return len(self._pool) > 0
 
         @property
@@ -126,18 +126,18 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class WorstPrice(IUnmatchedPool):
+    class WorstPrice(IUnmatchedPool[int | None, None]):
 
         def __init__(self, pool: Sequence[SplitTrade] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade) -> None:
+        def append(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade) -> None:
+        def insert(self, opening: SplitTrade, context: None) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, closing: SplitTrade) -> SplitTrade:
+        def pop(self, closing: SplitTrade, context: None) -> SplitTrade:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[-1], self._pool[:-1])
@@ -146,7 +146,7 @@ class UnmatchedPool:
             )
             return trade
 
-        def has(self, _closing: SplitTrade) -> bool:
+        def has(self, _closing: SplitTrade, context: None) -> bool:
             return len(self._pool) > 0
 
         @property

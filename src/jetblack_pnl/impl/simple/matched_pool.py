@@ -8,7 +8,7 @@ from ...core import SplitTrade, IMatchedPool
 TradeKey: TypeAlias = int | None
 
 
-class MatchedPool(IMatchedPool[TradeKey]):
+class MatchedPool(IMatchedPool[TradeKey, None]):
     """Simple pool of matched trades"""
 
     def __init__(
@@ -22,7 +22,8 @@ class MatchedPool(IMatchedPool[TradeKey]):
     def append(
             self,
             opening: SplitTrade[TradeKey],
-            closing: SplitTrade[TradeKey]
+            closing: SplitTrade[TradeKey],
+            context: None
     ) -> None:
         matched_trade = (opening, closing)
         self._pool = tuple((*self._pool, matched_trade))

@@ -46,37 +46,37 @@ def main(database: str | Path):
     # Buy 6 @ 100
     ts = datetime(2000, 1, 1, 9, 0, 0, 0)
     trade = Trade.create(con, ts, apple, tech, 6, 100)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     # Buy 6 @ 106
     ts += timedelta(seconds=1)
     trade = Trade.create(con, ts, apple, tech, 6, 106)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     # Buy 6 @ 103
     ts += timedelta(seconds=1)
     trade = Trade.create(con, ts, apple, tech, 6, 103)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     # Sell 9 @ 105
     ts += timedelta(seconds=1)
     trade = Trade.create(con, ts, apple, tech, -9, 105)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     # Sell 12 @ 107
     ts += timedelta(seconds=1)
     trade = Trade.create(con, ts, apple, tech, -12, 107)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     # Buy 3 @ 103
     ts += timedelta(seconds=1)
     trade = Trade.create(con, ts, apple, tech, 3, 103)
-    pnl = book.add_trade(trade.security, trade.book, trade)
+    pnl = book.add_trade(trade.security, trade.book, trade, con.cursor())
     print(pnl)
 
     con.close()

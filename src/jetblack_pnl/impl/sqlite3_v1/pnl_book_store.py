@@ -1,6 +1,6 @@
 """A basic database implementation"""
 
-from sqlite3 import Connection
+from sqlite3 import Cursor
 
 from ...core import (
     IPnlBookStore,
@@ -17,18 +17,15 @@ from .unmatched_pool import UnmatchedPool
 from .pnl import MAX_VALID_TO
 
 
-class PnlBookStore(IPnlBookStore[int, int, int]):
-
-    def __init__(self, con: Connection) -> None:
-        self._con = con
+class PnlBookStore(IPnlBookStore[int, int, int, Cursor]):
 
     def has(
             self,
             security: ISecurity[int],
-            book: IBook[int]
+            book: IBook[int],
+            context: Cursor,
     ) -> bool:
-        cur = self._con.cursor()
-        cur.execute(
+        context.execute(
             """
             SELECT
                 COUNT(*) AS count
@@ -43,7 +40,7 @@ class PnlBookStore(IPnlBookStore[int, int, int]):
             """,
             (security.key, book.key, MAX_VALID_TO)
         )
-        row = cur.fetchone()
+        row = context.fetchone()
         assert (row is not None)
         (count,) = row
         return count != 0
@@ -51,13 +48,13 @@ class PnlBookStore(IPnlBookStore[int, int, int]):
     def get(
             self,
             security: ISecurity[int],
-            book: IBook[int]
-    ) -> tuple[TradingPnl, IUnmatchedPool[int], IMatchedPool[int]]:
-        cur = self._con.cursor()
-        matched = MatchedPool(cur, security, book)
-        unmatched = UnmatchedPool.Fifo(cur, security, book)
+            book: IBook[int],
+            context: Cursor
+    ) -> tuple[TradingPnl, IUnmatchedPool[int, Cursor], IMatchedPool[int, Cursor]]:
+        matched = MatchedPool(security, book)
+        unmatched = UnmatchedPool.Fifo(security, book)
 
-        cur.execute(
+        context.execute(
             """
             SELECT
                 quantity,
@@ -74,7 +71,7 @@ class PnlBookStore(IPnlBookStore[int, int, int]):
             """,
             (security.key, book.key, MAX_VALID_TO)
         )
-        row = cur.fetchone()
+        row = context.fetchone()
         if row is None:
             raise KeyError()
         (quantity, cost, realized) = row
@@ -88,11 +85,11 @@ class PnlBookStore(IPnlBookStore[int, int, int]):
             book: IBook[int],
             trade: ITrade[int],
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[int],
-            matched: IMatchedPool[int]
+            unmatched: IUnmatchedPool[int, Cursor],
+            matched: IMatchedPool[int, Cursor],
+            context: Cursor
     ) -> None:
-        cur = self._con.cursor()
-        cur.execute(
+        context.execute(
             """
             UPDATE
                 pnl
@@ -110,7 +107,7 @@ class PnlBookStore(IPnlBookStore[int, int, int]):
             (trade.key, security.key, book.key, trade.key, MAX_VALID_TO)
         )
 
-        cur.execute(
+        context.execute(
             """
             INSERT INTO pnl
             (

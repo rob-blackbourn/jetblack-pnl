@@ -26,11 +26,11 @@ class TradeDb:
         try:
             ensure_pnl(cur, security, book, trade.key)
 
-            matched = MatchedPool(cur, security, book)
-            unmatched = UnmatchedPool.Fifo(cur, security, book)
+            matched = MatchedPool(security, book)
+            unmatched = UnmatchedPool.Fifo(security, book)
             pnl = select_pnl(cur, security, book, trade.key)
 
-            pnl = add_trade(pnl, trade, security, unmatched, matched)
+            pnl = add_trade(pnl, trade, security, unmatched, matched, cur)
             save_pnl(cur, pnl, security, book, trade.key)
             self._con.commit()
             return pnl
