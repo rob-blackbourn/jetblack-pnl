@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 import sqlite3
 
 from jetblack_pnl.impl.sqlite3_v1 import (
@@ -13,8 +14,26 @@ from jetblack_pnl.impl.sqlite3_v1 import (
 )
 
 
-def main(database: str):
+def ensure_database(database: str | Path) -> str | Path:
+    if isinstance(database, str):
+        if database == ':memory:':
+            return ':memory:'
+        database = Path(database)
+
+    if database.exists():
+        raise FileExistsError(f"Database exists: {database}")
+
+    if not database.parent.exists():
+        database.parent.mkdir()
+
+    return database
+
+
+def main(database: str | Path):
     register_handlers()
+
+    database = ensure_database(database)
+
     con = sqlite3.connect(database, detect_types=sqlite3.PARSE_DECLTYPES)
 
     trade_db = TradeDb(con)
@@ -65,5 +84,6 @@ def main(database: str):
 
 
 if __name__ == '__main__':
-    DATABASE = ":memory:"
+    # DATABASE = ":memory:"
+    DATABASE = "tmp/pnl.sqlite"
     main(DATABASE)
