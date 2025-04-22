@@ -1,7 +1,7 @@
 """An interface for an unmatched pool.
 """
 
-from typing import Protocol, runtime_checkable
+from typing import Protocol, Sequence, runtime_checkable
 
 from .context import TContext
 from .split_trade import SplitTrade
@@ -38,4 +38,7 @@ class IUnmatchedPool(Protocol[TTradeKey, TContext]):  # type: ignore
             closing: SplitTrade[TTradeKey],
             context: TContext
     ) -> bool:
+        ...
+
+    def pool(self, context: TContext) -> Sequence[SplitTrade[TTradeKey]]:
         ...

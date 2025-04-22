@@ -119,7 +119,10 @@ class MatchedPool(IMatchedPool[int, Cursor]):
             for opening_trade_id, closing_trade_id in context.fetchall()
         )
 
-    def pool(self, context: Cursor) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
+    def pool(
+            self,
+            context: Cursor
+    ) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
         context.execute(
             """
             SELECT
