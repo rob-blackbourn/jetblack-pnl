@@ -5,7 +5,7 @@ from decimal import Decimal
 from pathlib import Path
 import sqlite3
 
-from jetblack_pnl.impl.sqlite3_v1 import (
+from jetblack_pnl.impl.sqlite3_v2 import (
     Trade,
     register_handlers,
     Security,
