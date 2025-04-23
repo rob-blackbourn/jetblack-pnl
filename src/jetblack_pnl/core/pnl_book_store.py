@@ -2,41 +2,40 @@
 
 from typing import Protocol
 
-from .book import IBook, TBookKey
-from .context import TContext
+from .book import IBook
 from .matched_pool import IMatchedPool
-from .security import ISecurity, TSecurityKey
-from .trade import ITrade, TTradeKey
+from .security import ISecurity
+from .trade import ITrade
 from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
 
-class IPnlBookStore(Protocol[TSecurityKey, TBookKey, TTradeKey, TContext]):  # type: ignore
+class IPnlBookStore[SecurityKey, BookKey, TradeKey, Context](Protocol):
 
     def has(
             self,
-            security: ISecurity[TSecurityKey],
-            book: IBook[TBookKey],
-            context: TContext
+            security: ISecurity[SecurityKey],
+            book: IBook[BookKey],
+            context: Context
     ) -> bool:
         ...
 
     def get(
             self,
-            security: ISecurity[TSecurityKey],
-            book: IBook[TBookKey],
-            context: TContext
-    ) -> tuple[TradingPnl, IUnmatchedPool[TTradeKey, TContext], IMatchedPool[TTradeKey, TContext]]:
+            security: ISecurity[SecurityKey],
+            book: IBook[BookKey],
+            context: Context
+    ) -> tuple[TradingPnl, IUnmatchedPool[TradeKey, Context], IMatchedPool[TradeKey, Context]]:
         ...
 
     def set(
             self,
-            security: ISecurity[TSecurityKey],
-            book: IBook[TBookKey],
-            trade: ITrade[TTradeKey],
+            security: ISecurity[SecurityKey],
+            book: IBook[BookKey],
+            trade: ITrade[TradeKey],
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[TTradeKey, TContext],
-            matched: IMatchedPool[TTradeKey, TContext],
-            context: TContext
+            unmatched: IUnmatchedPool[TradeKey, Context],
+            matched: IMatchedPool[TradeKey, Context],
+            context: Context
     ) -> None:
         ...

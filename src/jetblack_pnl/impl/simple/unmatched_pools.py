@@ -1,11 +1,10 @@
 """A simple implementation of unmatched pools"""
 
-from typing import Sequence, TypeAlias
+from typing import Sequence
 
 from ...core import SplitTrade, IUnmatchedPool
 
-TradeKey: TypeAlias = int | None
-Context: TypeAlias = None
+from .types import TradeKey, Context
 
 
 class UnmatchedPool:
@@ -21,7 +20,7 @@ class UnmatchedPool:
         def insert(self, opening: SplitTrade[TradeKey], context: Context) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, _closing: SplitTrade[TradeKey], context: Context) -> SplitTrade:
+        def pop(self, _closing: SplitTrade[TradeKey], context: Context) -> SplitTrade[TradeKey]:
             trade, self._pool = (self._pool[0], self._pool[1:])
             return trade
 

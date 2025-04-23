@@ -2,17 +2,15 @@
 """
 
 from decimal import Decimal
-from typing import Protocol, TypeVar, runtime_checkable
-
-TSecurityKey = TypeVar('TSecurityKey', covariant=True)
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
-class ISecurity(Protocol[TSecurityKey]):
+class ISecurity[Key](Protocol):
     """A security interface"""
 
     @property
-    def key(self) -> TSecurityKey:
+    def key(self) -> Key:
         """The key for the security"""
 
     @property

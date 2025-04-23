@@ -45,3 +45,27 @@ files = [ "src/jetblack_pnl", "tests", "scratch" ]
 [[tool.mypy.overrides]]
 module = "pytest"
 ignore_missing_imports = true
+
+# pylint
+[tool.pylint.main]
+py-version = "3.12"
+jobs = 4
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_"]
+bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
+
+[tool.pylint."messages control"]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-symbolic-message-instead",
+    "use-implicit-booleaness-not-comparison-to-string",
+    "use-implicit-booleaness-not-comparison-to-zero",
+    "missing-module-docstring",
+]

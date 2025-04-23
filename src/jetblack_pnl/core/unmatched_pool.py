@@ -3,42 +3,40 @@
 
 from typing import Protocol, Sequence, runtime_checkable
 
-from .context import TContext
 from .split_trade import SplitTrade
-from .trade import TTradeKey
 
 
 @runtime_checkable
-class IUnmatchedPool(Protocol[TTradeKey, TContext]):  # type: ignore
+class IUnmatchedPool[TradeKey, Context](Protocol):  # type: ignore
     """A pool of unmatched trades"""
 
     def append(
             self,
-            opening: SplitTrade[TTradeKey],
-            context: TContext
+            opening: SplitTrade[TradeKey],
+            context: Context
     ) -> None:
         ...
 
     def insert(
             self,
-            opening: SplitTrade[TTradeKey],
-            context: TContext
+            opening: SplitTrade[TradeKey],
+            context: Context
     ) -> None:
         ...
 
     def pop(
             self,
-            closing: SplitTrade[TTradeKey],
-            context: TContext
-    ) -> SplitTrade[TTradeKey]:
+            closing: SplitTrade[TradeKey],
+            context: Context
+    ) -> SplitTrade[TradeKey]:
         ...
 
     def has(
             self,
-            closing: SplitTrade[TTradeKey],
-            context: TContext
+            closing: SplitTrade[TradeKey],
+            context: Context
     ) -> bool:
         ...
 
-    def pool(self, context: TContext) -> Sequence[SplitTrade[TTradeKey]]:
+    def pool(self, context: Context) -> Sequence[SplitTrade[TradeKey]]:
         ...

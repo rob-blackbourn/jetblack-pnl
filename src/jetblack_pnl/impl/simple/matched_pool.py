@@ -5,8 +5,7 @@ from typing import Sequence, TypeAlias
 
 from ...core import SplitTrade, IMatchedPool
 
-TradeKey: TypeAlias = int | None
-Context: TypeAlias = None
+from .types import TradeKey, Context
 
 
 class MatchedPool(IMatchedPool[TradeKey, Context]):

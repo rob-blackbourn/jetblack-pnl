@@ -10,10 +10,7 @@ from ...core import (
     ITrade
 )
 
-SecurityKey: TypeAlias = str
-BookKey: TypeAlias = str
-TradeKey: TypeAlias = int | None
-Context: TypeAlias = None
+from .types import SecurityKey, BookKey, TradeKey, Context
 
 UnmatchedPool: TypeAlias = IUnmatchedPool[TradeKey, Context]
 MatchedPool: TypeAlias = IMatchedPool[TradeKey, Context]
@@ -29,9 +26,9 @@ class PnlBookStore(IPnlBookStore[SecurityKey, BookKey, TradeKey, Context]):
 
     def has(
             self,
-            security: ISecurity[str],
-            book: IBook[str],
-            context: None
+            security: ISecurity[SecurityKey],
+            book: IBook[BookKey],
+            context: Context
     ) -> bool:
         key = (security.key, book.key)
         return key in self._cache
@@ -40,7 +37,7 @@ class PnlBookStore(IPnlBookStore[SecurityKey, BookKey, TradeKey, Context]):
             self,
             security: ISecurity[SecurityKey],
             book: IBook[BookKey],
-            context: None
+            context: Context
     ) -> tuple[TradingPnl, UnmatchedPool, MatchedPool]:
         key = (security.key, book.key)
         return self._cache[key]
@@ -51,9 +48,9 @@ class PnlBookStore(IPnlBookStore[SecurityKey, BookKey, TradeKey, Context]):
             book: IBook[BookKey],
             trade: ITrade,
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[TradeKey, None],
-            matched: IMatchedPool[TradeKey, None],
-            context: None
+            unmatched: IUnmatchedPool[TradeKey, Context],
+            matched: IMatchedPool[TradeKey, Context],
+            context: Context
     ) -> None:
         key = (security.key, book.key)
         self._cache[key] = (pnl, unmatched, matched)

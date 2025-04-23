@@ -5,10 +5,11 @@ from .matched_pool import MatchedPool
 from .pnl_book_store import PnlBookStore
 from .security import Security
 from .trade import Trade
+from .types import SecurityKey, BookKey, TradeKey, Context
 from .unmatched_pools import UnmatchedPool
 
 
-class SimplePnlBook(PnlBook[str, str, int | None, None]):
+class SimplePnlBook(PnlBook[SecurityKey, BookKey, TradeKey, Context]):
 
     def __init__(self):
         super().__init__(

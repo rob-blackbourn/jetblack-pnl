@@ -1,16 +1,13 @@
 """A book interface
 """
 
-from typing import Protocol, TypeVar, runtime_checkable
-
-
-TBookKey = TypeVar('TBookKey', covariant=True)
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
-class IBook(Protocol[TBookKey]):
+class IBook[Key](Protocol):
     """A book interface"""
 
     @property
-    def key(self) -> TBookKey:
+    def key(self) -> Key:
         """The key for the book"""
