@@ -29,3 +29,19 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/rob-blackbourn/jetblack-pnl"
 Issues = "https://github.com/rob-blackbourn/jetblack-pnl/issues"
+
+# pytest
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "function"
+
+# mypy
+[tool.mypy]
+files = [ "src/jetblack_pnl", "tests", "scratch" ]
+
+[[tool.mypy.overrides]]
+module = "pytest"
+ignore_missing_imports = true
