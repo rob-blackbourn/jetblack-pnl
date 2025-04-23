@@ -21,7 +21,8 @@ def ensure_database(database: str | Path) -> str | Path:
         database = Path(database)
 
     if database.exists():
-        raise FileExistsError(f"Database exists: {database}")
+        database.unlink()
+        # raise FileExistsError(f"Database exists: {database}")
 
     if not database.parent.exists():
         database.parent.mkdir()
