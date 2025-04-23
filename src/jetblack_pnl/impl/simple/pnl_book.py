@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from ...core import PnlBook, TradingPnl
 
 from .book import Book
@@ -22,11 +24,12 @@ class SimplePnlBook(PnlBook[SecurityKey, BookKey, TradeKey, Context]):
         self,
         security: Security,
         book: Book,
-        trade: Trade,
+        quantity: int | Decimal | str,
+        price: int | Decimal | str,
     ) -> TradingPnl:
         return self.add_trade(
             security,
             book,
-            trade,
+            Trade(quantity, price),
             None
         )
