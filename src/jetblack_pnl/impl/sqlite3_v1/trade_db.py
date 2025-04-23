@@ -2,12 +2,10 @@
 
 from sqlite3 import Connection
 
-from ...core import TradingPnl, add_trade
+from ...core import TradingPnl, add_trade, ISecurity, IBook
 
 from .matched_pool import MatchedPool
 from .unmatched_pool import UnmatchedPool
-from .book import Book
-from .security import Security
 from .trade import Trade
 from .tables import create_tables, drop_tables
 from .pnl import save_pnl, select_pnl, ensure_pnl
@@ -21,8 +19,8 @@ class TradeDb:
 
     def add_trade(
         self,
-        security: Security,
-        book: Book,
+        security: ISecurity[int],
+        book: IBook[int],
         trade: Trade,
     ) -> TradingPnl:
         cur = self._con.cursor()
