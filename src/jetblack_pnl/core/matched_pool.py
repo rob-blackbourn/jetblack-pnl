@@ -1,18 +1,24 @@
 """An interface for a matched pool.
 """
 
-from typing import Protocol, runtime_checkable
+from typing import Protocol, Sequence, runtime_checkable
 
 from .split_trade import SplitTrade
-from .trade import TTradeKey
 
 
 @runtime_checkable
-class IMatchedPool(Protocol[TTradeKey]):  # type: ignore
+class IMatchedPool[TradeKey, Context](Protocol):
 
     def append(
         self,
-        opening: SplitTrade[TTradeKey],
-        closing: SplitTrade[TTradeKey]
+        opening: SplitTrade[TradeKey],
+        closing: SplitTrade[TradeKey],
+        context: Context
     ) -> None:
+        ...
+
+    def pool(
+            self,
+            context: Context
+    ) -> Sequence[tuple[SplitTrade[TradeKey], SplitTrade[TradeKey]]]:
         ...

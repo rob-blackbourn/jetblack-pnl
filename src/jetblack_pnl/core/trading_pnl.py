@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import NamedTuple
 
 
-from .security import TSecurityKey, ISecurity
+from .security import ISecurity
 from .pnl_strip import PnlStrip
 
 
@@ -14,23 +14,23 @@ class TradingPnl(NamedTuple):
     cost: Decimal
     realized: Decimal
 
-    def avg_cost(self, security: ISecurity[TSecurityKey]) -> Decimal:
+    def avg_cost[SecurityKey](self, security: ISecurity[SecurityKey]) -> Decimal:
         return (
             Decimal(0)
             if self.quantity == 0 else
             -self.cost / self.quantity / security.contract_size
         )
 
-    def unrealized(
+    def unrealized[SecurityKey](
             self,
-            security: ISecurity[TSecurityKey],
+            security: ISecurity[SecurityKey],
             price: Decimal | int
     ) -> Decimal:
         return self.quantity * security.contract_size * price + self.cost
 
-    def strip(
+    def strip[SecurityKey](
             self,
-            security: ISecurity[TSecurityKey],
+            security: ISecurity[SecurityKey],
             price: Decimal | int
     ) -> PnlStrip:
         return PnlStrip(

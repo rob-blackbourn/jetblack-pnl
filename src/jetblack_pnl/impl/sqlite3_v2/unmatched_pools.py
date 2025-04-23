@@ -1,4 +1,4 @@
-"""Matched and unmatched pools"""
+"""Unmatched pools"""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from ...core import (
 )
 
 from .trade import Trade
-from .pnl import MAX_VALID_TO
+from .utils import MAX_VALID_TO
 
 
 class UnmatchedPool:

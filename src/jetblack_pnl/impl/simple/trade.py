@@ -4,10 +4,11 @@ from decimal import Decimal
 
 from ...core import ITrade
 
+from .types import TradeKey
 from .utils import to_decimal
 
 
-class Trade(ITrade[int | None]):
+class Trade(ITrade[TradeKey]):
     """A simple trade"""
 
     def __init__(
@@ -29,7 +30,7 @@ class Trade(ITrade[int | None]):
         return self._price
 
     @property
-    def key(self) -> int | None:
+    def key(self) -> TradeKey:
         return self._key
 
     def __eq__(self, value: object) -> bool:

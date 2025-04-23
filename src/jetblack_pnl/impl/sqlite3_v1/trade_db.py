@@ -2,10 +2,11 @@
 
 from sqlite3 import Connection
 
-from ...core import TradingPnl, add_trade, ISecurity, IBook, ITrade
+from ...core import TradingPnl, add_trade, ISecurity, IBook
 
 from .matched_pool import MatchedPool
 from .unmatched_pool import UnmatchedPool
+from .trade import Trade
 from .tables import create_tables, drop_tables
 from .pnl import save_pnl, select_pnl, ensure_pnl
 
@@ -20,17 +21,17 @@ class TradeDb:
         self,
         security: ISecurity[int],
         book: IBook[int],
-        trade: ITrade[int],
+        trade: Trade,
     ) -> TradingPnl:
         cur = self._con.cursor()
         try:
             ensure_pnl(cur, security, book, trade.key)
 
-            matched = MatchedPool(cur, security, book)
-            unmatched = UnmatchedPool.Fifo(cur, security, book)
+            matched = MatchedPool(security, book)
+            unmatched = UnmatchedPool.Fifo(security, book)
             pnl = select_pnl(cur, security, book, trade.key)
 
-            pnl = add_trade(pnl, trade, security, unmatched, matched)
+            pnl = add_trade(pnl, trade, security, unmatched, matched, cur)
             save_pnl(cur, pnl, security, book, trade.key)
             self._con.commit()
             return pnl

@@ -5,30 +5,32 @@ Some experiments in calculating trading P&L.
 ## Simple Example
 
 ```python
-from jetblack_pnl.core.example import SimplePnl
+from jetblack_pnl.impl.simple import Security, Book, SimplePnlBook
 
-book = SimplePnl()
+  pnl_book = SimplePnlBook()
+  tech = Book('tech')
+  apple = Security('AAPL', 1000, False)
 
-# Buy 6 @ 100
-pnl = book.add_trade('AAPL', 6, 100, 'tech')
-# (quantity, avg_cost, price, realized, unrealized)
-assert pnl.strip(100) == (6, 100, 100, 0, 0)
+  # Buy 6 @ 100
+  pnl = pnl_book.add(apple, tech, 6, 100)
+  # (quantity, avg_cost, price, realized, unrealized)
+  assert pnl.strip(apple, 100) == (6, 100, 100, 0, 0)
 
-# Buy 6 @ 106
-pnl = book.add_trade('AAPL', 6, 106, 'tech')
-assert pnl.strip(106) == (12, 103, 106, 0, 36)
+  # Buy 6 @ 106
+  pnl = pnl_book.add(apple, tech, 6, 106)
+  assert pnl.strip(apple, 106) == (12, 103, 106, 0, 36000)
 
-# Buy 6 @ 103
-pnl = book.add_trade('AAPL', 6, 103, 'tech')
-assert pnl.strip(103) == (18, 103, 103, 0, 0)
+  # Buy 6 @ 103
+  pnl = pnl_book.add(apple, tech, 6, 103)
+  assert pnl.strip(apple, 103) == (18, 103, 103, 0, 0)
 
-# Sell 9 @ 105
-pnl = book.add_trade('AAPL', -9, 105, 'tech')
-assert pnl.strip(105) == (9, 104, 105, 27, 9)
+  # Sell 9 @ 105
+  pnl = pnl_book.add(apple, tech, -9, 105)
+  assert pnl.strip(apple, 105) == (9, 104, 105, 27000, 9000)
 
-# Sell 9 @ 107
-pnl = book.add_trade('AAPL', -9, 107, 'tech')
-assert pnl.strip(107) == (0, 0, 107, 54, 0)
+  # Sell 9 @ 107
+  pnl = pnl_book.add(apple, tech, -9, 107)
+  assert pnl.strip(apple, 107) == (0, 0, 107, 54000, 0)
 ```
 
 ## Overview

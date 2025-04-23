@@ -5,10 +5,10 @@ from typing import Sequence, TypeAlias
 
 from ...core import SplitTrade, IMatchedPool
 
-TradeKey: TypeAlias = int | None
+from .types import TradeKey, Context
 
 
-class MatchedPool(IMatchedPool[TradeKey]):
+class MatchedPool(IMatchedPool[TradeKey, Context]):
     """Simple pool of matched trades"""
 
     def __init__(
@@ -22,14 +22,15 @@ class MatchedPool(IMatchedPool[TradeKey]):
     def append(
             self,
             opening: SplitTrade[TradeKey],
-            closing: SplitTrade[TradeKey]
+            closing: SplitTrade[TradeKey],
+            context: Context
     ) -> None:
         matched_trade = (opening, closing)
         self._pool = tuple((*self._pool, matched_trade))
 
-    @property
     def pool(
-            self
+            self,
+            context: Context
     ) -> Sequence[tuple[SplitTrade[TradeKey], SplitTrade[TradeKey]]]:
         """Returns the matched pool"""
         return self._pool

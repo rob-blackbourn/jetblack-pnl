@@ -1,4 +1,4 @@
-"""Matched and unmatched pools"""
+"""Matched pools"""
 
 from sqlite3 import Cursor
 from typing import Sequence
@@ -11,7 +11,7 @@ from ...core import (
 )
 
 from .trade import Trade
-from .pnl import MAX_VALID_TO
+from .utils import MAX_VALID_TO
 
 
 class MatchedPool(IMatchedPool[int, Cursor]):
@@ -119,7 +119,10 @@ class MatchedPool(IMatchedPool[int, Cursor]):
             for opening_trade_id, closing_trade_id in context.fetchall()
         )
 
-    def pool(self, context: Cursor) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
+    def pool(
+            self,
+            context: Cursor
+    ) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
         context.execute(
             """
             SELECT

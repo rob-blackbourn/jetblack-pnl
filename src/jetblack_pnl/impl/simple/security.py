@@ -3,10 +3,12 @@
 from decimal import Decimal
 
 from ...core import ISecurity
+
+from .types import SecurityKey
 from .utils import to_decimal
 
 
-class Security(ISecurity[str]):
+class Security(ISecurity[SecurityKey]):
     """A simple implementation of a security"""
 
     def __init__(
