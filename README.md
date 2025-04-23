@@ -7,30 +7,30 @@ Some experiments in calculating trading P&L.
 ```python
 from jetblack_pnl.impl.simple import Security, Book, SimplePnlBook
 
-  pnl_book = SimplePnlBook()
-  tech = Book('tech')
-  apple = Security('AAPL', 1000, False)
+pnl_book = SimplePnlBook()
+tech = Book('tech')
+apple = Security('AAPL', 1000, False)
 
-  # Buy 6 @ 100
-  pnl = pnl_book.add(apple, tech, 6, 100)
-  # (quantity, avg_cost, price, realized, unrealized)
-  assert pnl.strip(apple, 100) == (6, 100, 100, 0, 0)
+# Buy 6 @ 100
+pnl = pnl_book.add(apple, tech, 6, 100)
+# (quantity, avg_cost, price, realized, unrealized)
+assert pnl.strip(apple, 100) == (6, 100, 100, 0, 0)
 
-  # Buy 6 @ 106
-  pnl = pnl_book.add(apple, tech, 6, 106)
-  assert pnl.strip(apple, 106) == (12, 103, 106, 0, 36000)
+# Buy 6 @ 106
+pnl = pnl_book.add(apple, tech, 6, 106)
+assert pnl.strip(apple, 106) == (12, 103, 106, 0, 36000)
 
-  # Buy 6 @ 103
-  pnl = pnl_book.add(apple, tech, 6, 103)
-  assert pnl.strip(apple, 103) == (18, 103, 103, 0, 0)
+# Buy 6 @ 103
+pnl = pnl_book.add(apple, tech, 6, 103)
+assert pnl.strip(apple, 103) == (18, 103, 103, 0, 0)
 
-  # Sell 9 @ 105
-  pnl = pnl_book.add(apple, tech, -9, 105)
-  assert pnl.strip(apple, 105) == (9, 104, 105, 27000, 9000)
+# Sell 9 @ 105
+pnl = pnl_book.add(apple, tech, -9, 105)
+assert pnl.strip(apple, 105) == (9, 104, 105, 27000, 9000)
 
-  # Sell 9 @ 107
-  pnl = pnl_book.add(apple, tech, -9, 107)
-  assert pnl.strip(apple, 107) == (0, 0, 107, 54000, 0)
+# Sell 9 @ 107
+pnl = pnl_book.add(apple, tech, -9, 107)
+assert pnl.strip(apple, 107) == (0, 0, 107, 54000, 0)
 ```
 
 ## Overview
@@ -54,7 +54,7 @@ FIFO is used by convention. It's origin may be in standard accounting, where old
 stock would likely have been cheaper to acquire, and matching new sales against old
 purchases ensured the P&L was not skewed by old inventory. It is not the only
 methodology however. Traders sometimes prefer a "worst price" approach, were a
-sell is matched against the highest price buy.
+sell is matched against the highest buy price.
 
 Regardless of the approach the P&L can be characterized by the following
 properties:
