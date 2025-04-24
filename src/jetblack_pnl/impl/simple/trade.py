@@ -41,7 +41,10 @@ class Trade(ITrade[TradeKey]):
             value.key == self.key
         )
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         prefix = "" if self._key is None else f"[{self._key}]: "
         side = "buy" if self.quantity > 0 else "sell"
         return f"{prefix}{side} {abs(self.quantity)} @ {self.price}"
+
+    def __repr__(self) -> str:
+        return str(self)

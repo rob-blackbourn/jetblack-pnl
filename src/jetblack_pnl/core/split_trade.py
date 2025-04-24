@@ -35,4 +35,5 @@ class SplitTrade[Key]:
         )
 
     def __repr__(self) -> str:
-        return f"{self.quantity=} <{self.trade=}>"
+        side = 'buy' if self.quantity >= 0 else 'sell'
+        return f"{side} {abs(self.quantity)} of trade: {self.trade}"
