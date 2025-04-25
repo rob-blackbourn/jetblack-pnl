@@ -1,28 +1,29 @@
 """A simple implementation of a matched pool"""
 
-from typing import Sequence, TypeAlias
+from typing import Sequence
 
 
 from ...core import SplitTrade, IMatchedPool
 
-from .types import TradeKey, Context
+from .types import Context
+from .trade import Trade
 
 
-class MatchedPool(IMatchedPool[TradeKey, Context]):
+class MatchedPool(IMatchedPool[Trade, Context]):
     """Simple pool of matched trades"""
 
     def __init__(
             self,
             pool: Sequence[
-                tuple[SplitTrade[TradeKey], SplitTrade[TradeKey]]
+                tuple[SplitTrade[Trade], SplitTrade[Trade]]
             ] = ()
     ) -> None:
         self._pool = pool
 
     def append(
             self,
-            opening: SplitTrade[TradeKey],
-            closing: SplitTrade[TradeKey],
+            opening: SplitTrade[Trade],
+            closing: SplitTrade[Trade],
             context: Context
     ) -> None:
         matched_trade = (opening, closing)
@@ -31,7 +32,7 @@ class MatchedPool(IMatchedPool[TradeKey, Context]):
     def pool(
             self,
             context: Context
-    ) -> Sequence[tuple[SplitTrade[TradeKey], SplitTrade[TradeKey]]]:
+    ) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
         """Returns the matched pool"""
         return self._pool
 

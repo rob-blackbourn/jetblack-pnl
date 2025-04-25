@@ -4,14 +4,16 @@ from sqlite3 import Connection, Cursor
 
 from ...core import TradingPnl, PnlBook
 
+from .book import Book
 from .matched_pool import MatchedPool
+from .security import Security
 from .trade import Trade
 from .unmatched_pools import UnmatchedPool
 from .tables import create_tables, drop_tables
 from .pnl_book_store import PnlBookStore
 
 
-class DbPnlBook(PnlBook[int, int, int, Cursor]):
+class DbPnlBook(PnlBook[Security, Book, Trade, Cursor]):
 
     def __init__(self, con: Connection) -> None:
         self._con = con

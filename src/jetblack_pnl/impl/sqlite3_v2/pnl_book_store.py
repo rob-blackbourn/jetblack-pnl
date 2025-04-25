@@ -7,22 +7,22 @@ from ...core import (
     TradingPnl,
     IUnmatchedPool,
     IMatchedPool,
-    ISecurity,
-    IBook,
-    ITrade
 )
 
+from .book import Book
 from .matched_pool import MatchedPool
+from .security import Security
+from .trade import Trade
 from .unmatched_pools import UnmatchedPool
 from .utils import MAX_VALID_TO
 
 
-class PnlBookStore(IPnlBookStore[int, int, int, Cursor]):
+class PnlBookStore(IPnlBookStore[Security, Book, Trade, Cursor]):
 
     def has(
             self,
-            security: ISecurity[int],
-            book: IBook[int],
+            security: Security,
+            book: Book,
             context: Cursor,
     ) -> bool:
         context.execute(
@@ -47,10 +47,10 @@ class PnlBookStore(IPnlBookStore[int, int, int, Cursor]):
 
     def get(
             self,
-            security: ISecurity[int],
-            book: IBook[int],
+            security: Security,
+            book: Book,
             context: Cursor
-    ) -> tuple[TradingPnl, IUnmatchedPool[int, Cursor], IMatchedPool[int, Cursor]]:
+    ) -> tuple[TradingPnl, IUnmatchedPool[Trade, Cursor], IMatchedPool[Trade, Cursor]]:
         matched = MatchedPool(security, book)
         unmatched = UnmatchedPool.Fifo(security, book)
 
@@ -81,12 +81,12 @@ class PnlBookStore(IPnlBookStore[int, int, int, Cursor]):
 
     def set(
             self,
-            security: ISecurity[int],
-            book: IBook[int],
-            trade: ITrade[int],
+            security: Security,
+            book: Book,
+            trade: Trade,
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[int, Cursor],
-            matched: IMatchedPool[int, Cursor],
+            unmatched: IUnmatchedPool[Trade, Cursor],
+            matched: IMatchedPool[Trade, Cursor],
             context: Cursor
     ) -> None:
         context.execute(

@@ -7,11 +7,11 @@ from .matched_pool import MatchedPool
 from .pnl_book_store import PnlBookStore
 from .security import Security
 from .trade import Trade
-from .types import SecurityKey, BookKey, TradeKey, Context
+from .types import Context
 from .unmatched_pools import UnmatchedPool
 
 
-class SimplePnlBook(PnlBook[SecurityKey, BookKey, TradeKey, Context]):
+class SimplePnlBook(PnlBook[Security, Book, Trade, Context]):
 
     def __init__(self):
         super().__init__(

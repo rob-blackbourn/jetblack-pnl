@@ -6,30 +6,27 @@ from decimal import Decimal
 from sqlite3 import Cursor
 from typing import cast, Sequence
 
-from ...core import (
-    SplitTrade,
-    IUnmatchedPool,
-    ISecurity,
-    IBook
-)
+from ...core import SplitTrade, IUnmatchedPool
 
+from .book import Book
+from .security import Security
 from .trade import Trade
 from .pnl import MAX_VALID_TO
 
 
 class UnmatchedPool:
 
-    class Fifo(IUnmatchedPool[int, Cursor]):
+    class Fifo(IUnmatchedPool[Trade, Cursor]):
 
         def __init__(
                 self,
-                security: ISecurity[int],
-                book: IBook[int]
+                security: Security,
+                book: Book
         ) -> None:
             self._security = security
             self._book = book
 
-        def append(self, opening: SplitTrade[int], context: Cursor) -> None:
+        def append(self, opening: SplitTrade[Trade], context: Cursor) -> None:
             market_trade = cast(Trade, opening.trade)
 
             context.execute(
@@ -54,10 +51,10 @@ class UnmatchedPool:
                 )
             )
 
-        def insert(self, opening: SplitTrade[int], context: Cursor) -> None:
+        def insert(self, opening: SplitTrade[Trade], context: Cursor) -> None:
             self.append(opening, context)
 
-        def pop(self, closing: SplitTrade[int], context: Cursor) -> SplitTrade[int]:
+        def pop(self, closing: SplitTrade[Trade], context: Cursor) -> SplitTrade[Trade]:
             # Find the oldest unmatched trade that is in the valid window.
             context.execute(
                 """
@@ -119,7 +116,7 @@ class UnmatchedPool:
             pnl_trade = SplitTrade(quantity, market_trade)
             return pnl_trade
 
-        def has(self, closing: SplitTrade[int], context: Cursor) -> bool:
+        def has(self, closing: SplitTrade[Trade], context: Cursor) -> bool:
             context.execute(
                 """
                 SELECT
@@ -153,7 +150,7 @@ class UnmatchedPool:
                 self,
                 last_trade_id: int,
                 context: Cursor
-        ) -> Sequence[SplitTrade[int]]:
+        ) -> Sequence[SplitTrade[Trade]]:
             context.execute(
                 """
                 SELECT
@@ -179,7 +176,7 @@ class UnmatchedPool:
                     trade_id: int,
                     quantity: Decimal,
                     context: Cursor
-            ) -> SplitTrade[int]:
+            ) -> SplitTrade[Trade]:
                 trade = Trade.load(context, trade_id)
                 assert trade is not None
                 return SplitTrade(quantity, trade)
@@ -189,7 +186,7 @@ class UnmatchedPool:
                 for trade_id, quantity in context.fetchall()
             )
 
-        def pool(self, context: Cursor) -> Sequence[SplitTrade[int]]:
+        def pool(self, context: Cursor) -> Sequence[SplitTrade[Trade]]:
             context.execute(
                 """
                 SELECT
