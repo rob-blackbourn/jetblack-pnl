@@ -4,15 +4,16 @@
 from typing import Protocol, Sequence, runtime_checkable
 
 from .split_trade import SplitTrade
+from .trade import ITrade
 
 
 @runtime_checkable
-class IMatchedPool[TradeKey, Context](Protocol):
+class IMatchedPool[Trade: ITrade, Context](Protocol):
 
     def append(
         self,
-        opening: SplitTrade[TradeKey],
-        closing: SplitTrade[TradeKey],
+        opening: SplitTrade[Trade],
+        closing: SplitTrade[Trade],
         context: Context
     ) -> None:
         ...
@@ -20,5 +21,5 @@ class IMatchedPool[TradeKey, Context](Protocol):
     def pool(
             self,
             context: Context
-    ) -> Sequence[tuple[SplitTrade[TradeKey], SplitTrade[TradeKey]]]:
+    ) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
         ...

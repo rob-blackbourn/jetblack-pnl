@@ -3,31 +3,28 @@
 from sqlite3 import Cursor
 from typing import Sequence
 
-from ...core import (
-    SplitTrade,
-    IMatchedPool,
-    ISecurity,
-    IBook
-)
+from ...core import SplitTrade, IMatchedPool
 
+from .book import Book
+from .security import Security
 from .trade import Trade
 from .pnl import MAX_VALID_TO
 
 
-class MatchedPool(IMatchedPool[int, Cursor]):
+class MatchedPool(IMatchedPool[Trade, Cursor]):
 
     def __init__(
             self,
-            security: ISecurity[int],
-            book: IBook[int]
+            security: Security,
+            book: Book
     ) -> None:
         self._security = security
         self._book = book
 
     def append(
             self,
-            opening: SplitTrade[int],
-            closing: SplitTrade[int],
+            opening: SplitTrade[Trade],
+            closing: SplitTrade[Trade],
             context: Cursor
     ) -> None:
         context.execute(
@@ -56,7 +53,7 @@ class MatchedPool(IMatchedPool[int, Cursor]):
             self,
             last_trade_id: int,
             context: Cursor
-    ) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
+    ) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
         context.execute(
             """
             SELECT
@@ -104,7 +101,7 @@ class MatchedPool(IMatchedPool[int, Cursor]):
                 opening_trade_id: int,
                 closing_trade_id: int,
                 context: Cursor
-        ) -> tuple[SplitTrade[int], SplitTrade[int]]:
+        ) -> tuple[SplitTrade[Trade], SplitTrade[Trade]]:
             opening_trade = Trade.load(context, opening_trade_id)
             assert opening_trade is not None
             closing_trade = Trade.load(context, closing_trade_id)
@@ -119,7 +116,7 @@ class MatchedPool(IMatchedPool[int, Cursor]):
             for opening_trade_id, closing_trade_id in context.fetchall()
         )
 
-    def pool(self, context: Cursor) -> Sequence[tuple[SplitTrade[int], SplitTrade[int]]]:
+    def pool(self, context: Cursor) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
         context.execute(
             """
             SELECT

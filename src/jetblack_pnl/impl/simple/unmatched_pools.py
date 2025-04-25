@@ -4,30 +4,31 @@ from typing import Sequence
 
 from ...core import SplitTrade, IUnmatchedPool
 
-from .types import TradeKey, Context
+from .trade import Trade
+from .types import Context
 
 
 class UnmatchedPool:
 
-    class Fifo(IUnmatchedPool[TradeKey, Context]):
+    class Fifo(IUnmatchedPool[Trade, Context]):
 
-        def __init__(self, pool: Sequence[SplitTrade[TradeKey]] = ()) -> None:
+        def __init__(self, pool: Sequence[SplitTrade[Trade]] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def append(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def insert(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, _closing: SplitTrade[TradeKey], context: Context) -> SplitTrade[TradeKey]:
+        def pop(self, _closing: SplitTrade[Trade], context: Context) -> SplitTrade[Trade]:
             trade, self._pool = (self._pool[0], self._pool[1:])
             return trade
 
-        def has(self, _closing: SplitTrade[TradeKey], context: Context) -> bool:
+        def has(self, _closing: SplitTrade[Trade], context: Context) -> bool:
             return len(self._pool) > 0
 
-        def pool(self, context: Context) -> Sequence[SplitTrade[TradeKey]]:
+        def pool(self, context: Context) -> Sequence[SplitTrade[Trade]]:
             """Returns the unmatched pool"""
             return self._pool
 
@@ -46,29 +47,29 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class Lifo(IUnmatchedPool[TradeKey, Context]):
+    class Lifo(IUnmatchedPool[Trade, Context]):
 
-        def __init__(self, pool: Sequence[SplitTrade[TradeKey]] = ()) -> None:
+        def __init__(self, pool: Sequence[SplitTrade[Trade]] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def append(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def insert(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((opening, *self._pool))
 
         def pop(
                 self,
-                _closing: SplitTrade[TradeKey],
+                _closing: SplitTrade[Trade],
                 context: Context
-        ) -> SplitTrade[TradeKey]:
+        ) -> SplitTrade[Trade]:
             trade, self._pool = (self._pool[-1], self._pool[:-1])
             return trade
 
-        def has(self, _closing: SplitTrade[TradeKey], context: Context) -> bool:
+        def has(self, _closing: SplitTrade[Trade], context: Context) -> bool:
             return len(self._pool) > 0
 
-        def pool(self, context: Context) -> Sequence[SplitTrade[TradeKey]]:
+        def pool(self, context: Context) -> Sequence[SplitTrade[Trade]]:
             """Returns the unmatched pool"""
             return self._pool
 
@@ -87,18 +88,18 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class BestPrice(IUnmatchedPool[TradeKey, Context]):
+    class BestPrice(IUnmatchedPool[Trade, Context]):
 
-        def __init__(self, pool: Sequence[SplitTrade[TradeKey]] = ()) -> None:
+        def __init__(self, pool: Sequence[SplitTrade[Trade]] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def append(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def insert(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, closing: SplitTrade[TradeKey], context: Context) -> SplitTrade[TradeKey]:
+        def pop(self, closing: SplitTrade[Trade], context: Context) -> SplitTrade[Trade]:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[0], self._pool[1:])
@@ -107,10 +108,10 @@ class UnmatchedPool:
             )
             return trade
 
-        def has(self, _closing: SplitTrade[TradeKey], context: Context) -> bool:
+        def has(self, _closing: SplitTrade[Trade], context: Context) -> bool:
             return len(self._pool) > 0
 
-        def pool(self, context: Context) -> Sequence[SplitTrade[TradeKey]]:
+        def pool(self, context: Context) -> Sequence[SplitTrade[Trade]]:
             """Returns the unmatched pool"""
             return self._pool
 
@@ -129,18 +130,18 @@ class UnmatchedPool:
         def __repr__(self) -> str:
             return str(self._pool)
 
-    class WorstPrice(IUnmatchedPool[TradeKey, Context]):
+    class WorstPrice(IUnmatchedPool[Trade, Context]):
 
-        def __init__(self, pool: Sequence[SplitTrade[TradeKey]] = ()) -> None:
+        def __init__(self, pool: Sequence[SplitTrade[Trade]] = ()) -> None:
             self._pool = pool
 
-        def append(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def append(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((*self._pool, opening))
 
-        def insert(self, opening: SplitTrade[TradeKey], context: Context) -> None:
+        def insert(self, opening: SplitTrade[Trade], context: Context) -> None:
             self._pool = tuple((opening, *self._pool))
 
-        def pop(self, closing: SplitTrade[TradeKey], context: Context) -> SplitTrade[TradeKey]:
+        def pop(self, closing: SplitTrade[Trade], context: Context) -> SplitTrade[Trade]:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[-1], self._pool[:-1])
@@ -149,10 +150,10 @@ class UnmatchedPool:
             )
             return trade
 
-        def has(self, _closing: SplitTrade[TradeKey], context: Context) -> bool:
+        def has(self, _closing: SplitTrade[Trade], context: Context) -> bool:
             return len(self._pool) > 0
 
-        def pool(self, context: Context) -> Sequence[SplitTrade[TradeKey]]:
+        def pool(self, context: Context) -> Sequence[SplitTrade[Trade]]:
             """Returns the unmatched pool"""
             return self._pool
 

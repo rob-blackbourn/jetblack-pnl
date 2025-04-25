@@ -6,10 +6,10 @@ from typing import Optional, Self
 
 from sqlite3 import Cursor, Connection
 
-from ...core import ITrade, ISecurity, IBook
+from ...core import ITrade
 
-from .security import Security
 from .book import Book
+from .security import Security
 from .utils import to_decimal
 
 
@@ -19,8 +19,8 @@ class Trade(ITrade[int]):
         self,
         trade_key: int,
         timestamp: datetime,
-        security: ISecurity[int],
-        book: IBook[int],
+        security: Security,
+        book: Book,
         quantity: Decimal | int | str,
         price: Decimal | int | str,
     ) -> None:
@@ -40,11 +40,11 @@ class Trade(ITrade[int]):
         return self._timestamp
 
     @property
-    def security(self) -> ISecurity[int]:
+    def security(self) -> Security:
         return self._security
 
     @property
-    def book(self) -> IBook[int]:
+    def book(self) -> Book:
         return self._book
 
     @property
@@ -88,8 +88,8 @@ class Trade(ITrade[int]):
         cls,
         con: Connection,
         timestamp: datetime,
-        security: ISecurity[int],
-        book: IBook[int],
+        security: Security,
+        book: Book,
         quantity: int | str | Decimal,
         price: int | str | Decimal,
     ) -> Self:

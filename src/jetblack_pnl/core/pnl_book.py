@@ -14,19 +14,19 @@ from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
 
-class PnlBook[SecurityKey, BookKey, TradeKey, Context]:
+class PnlBook[TSecurity: ISecurity, TBook: IBook, TTrade: ITrade, TContext]:
     """A simple implementation of a PnL book"""
 
     def __init__(
             self,
-            store: IPnlBookStore[SecurityKey, BookKey, TradeKey, Context],
+            store: IPnlBookStore[TSecurity, TBook, TTrade, TContext],
             matched_factory: Callable[
-                [ISecurity[SecurityKey], IBook[BookKey], Context],
-                IMatchedPool[TradeKey, Context]
+                [TSecurity, TBook, TContext],
+                IMatchedPool[TTrade, TContext]
             ],
             unmatched_factory: Callable[
-                [ISecurity[SecurityKey], IBook[BookKey], Context],
-                IUnmatchedPool[TradeKey, Context]
+                [TSecurity, TBook, TContext],
+                IUnmatchedPool[TTrade, TContext]
             ]
     ) -> None:
         self._matched_factory = matched_factory
@@ -35,10 +35,10 @@ class PnlBook[SecurityKey, BookKey, TradeKey, Context]:
 
     def add_trade(
         self,
-        security: ISecurity[SecurityKey],
-        book: IBook[BookKey],
-        trade: ITrade[TradeKey],
-        context: Context
+        security: TSecurity,
+        book: TBook,
+        trade: TTrade,
+        context: TContext
     ) -> TradingPnl:
         if self._store.has(security, book, context):
             pnl, unmatched, matched = self._store.get(security, book, context)

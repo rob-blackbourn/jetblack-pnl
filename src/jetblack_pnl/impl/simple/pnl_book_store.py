@@ -1,33 +1,33 @@
-from typing import TypeAlias
 
 from ...core import (
     IPnlBookStore,
     TradingPnl,
     IUnmatchedPool,
     IMatchedPool,
-    ISecurity,
-    IBook,
-    ITrade
 )
 
-from .types import SecurityKey, BookKey, TradeKey, Context
+from .book import Book
+from .security import Security
+from .trade import Trade
+from .types import Context
 
-UnmatchedPool: TypeAlias = IUnmatchedPool[TradeKey, Context]
-MatchedPool: TypeAlias = IMatchedPool[TradeKey, Context]
 
-
-class PnlBookStore(IPnlBookStore[SecurityKey, BookKey, TradeKey, Context]):
+class PnlBookStore(IPnlBookStore[Security, Book, Trade, Context]):
 
     def __init__(self) -> None:
         self._cache: dict[
-            tuple[SecurityKey, BookKey],
-            tuple[TradingPnl, UnmatchedPool, MatchedPool]
+            tuple[str, str],
+            tuple[
+                TradingPnl,
+                IUnmatchedPool[Trade, Context],
+                IMatchedPool[Trade, Context]
+            ]
         ] = {}
 
     def has(
             self,
-            security: ISecurity[SecurityKey],
-            book: IBook[BookKey],
+            security: Security,
+            book: Book,
             context: Context
     ) -> bool:
         key = (security.key, book.key)
@@ -35,21 +35,21 @@ class PnlBookStore(IPnlBookStore[SecurityKey, BookKey, TradeKey, Context]):
 
     def get(
             self,
-            security: ISecurity[SecurityKey],
-            book: IBook[BookKey],
+            security: Security,
+            book: Book,
             context: Context
-    ) -> tuple[TradingPnl, UnmatchedPool, MatchedPool]:
+    ) -> tuple[TradingPnl, IUnmatchedPool[Trade, Context], IMatchedPool[Trade, Context]]:
         key = (security.key, book.key)
         return self._cache[key]
 
     def set(
             self,
-            security: ISecurity[SecurityKey],
-            book: IBook[BookKey],
-            trade: ITrade,
+            security: Security,
+            book: Book,
+            trade: Trade,
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[TradeKey, Context],
-            matched: IMatchedPool[TradeKey, Context],
+            unmatched: IUnmatchedPool[Trade, Context],
+            matched: IMatchedPool[Trade, Context],
             context: Context
     ) -> None:
         key = (security.key, book.key)
