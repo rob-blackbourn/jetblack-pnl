@@ -7,9 +7,6 @@ from ...core import (
     TradingPnl,
     IUnmatchedPool,
     IMatchedPool,
-    ISecurity,
-    IBook,
-    ITrade
 )
 
 from .book import Book
