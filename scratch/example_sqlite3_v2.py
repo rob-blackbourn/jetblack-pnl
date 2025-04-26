@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 import sqlite3
-from typing import Any, Generator
+from typing import Generator
 
 from jetblack_pnl.impl.sqlite3_v2 import (
     create_tables,
