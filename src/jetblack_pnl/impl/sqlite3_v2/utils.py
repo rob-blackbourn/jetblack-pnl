@@ -2,8 +2,10 @@
 
 from decimal import Decimal
 
+type AnyNumber = int | float | str | Decimal
 
-def to_decimal(number: int | Decimal | str) -> Decimal:
+
+def to_decimal(number: AnyNumber) -> Decimal:
     """Convert to a decimal.
 
     Args:

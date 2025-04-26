@@ -6,6 +6,8 @@ from sqlite3 import Cursor, Connection
 
 from ...core import ISecurity
 
+from .utils import to_decimal, AnyNumber
+
 
 class Security(ISecurity[int]):
     """A security with an integer id"""
@@ -14,12 +16,12 @@ class Security(ISecurity[int]):
             self,
             key: int,
             name: str,
-            contract_size: Decimal,
+            contract_size: AnyNumber,
             is_cash: bool
     ) -> None:
         self._key = key
         self._name = name
-        self._contract_size = contract_size
+        self._contract_size = to_decimal(contract_size)
         self._is_cash = is_cash
 
     @property
@@ -89,10 +91,11 @@ class Security(ISecurity[int]):
             cls,
             con: Connection,
             name: str,
-            contract_size: Decimal,
+            contract_size: AnyNumber,
             is_cash: bool
     ) -> 'Security':
         cur = con.cursor()
+        contract_size = to_decimal(contract_size)
         cur.execute(
             """
             INSERT INTO security(name, contract_size, is_cash)

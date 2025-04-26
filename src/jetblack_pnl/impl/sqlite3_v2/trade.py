@@ -10,7 +10,7 @@ from ...core import ITrade
 
 from .book import Book
 from .security import Security
-from .utils import to_decimal
+from .utils import to_decimal, AnyNumber
 
 
 class Trade(ITrade[int]):
@@ -21,8 +21,8 @@ class Trade(ITrade[int]):
         timestamp: datetime,
         security: Security,
         book: Book,
-        quantity: Decimal | int | str,
-        price: Decimal | int | str,
+        quantity: AnyNumber,
+        price: AnyNumber,
     ) -> None:
         self._trade_id = trade_key
         self._timestamp = timestamp
@@ -90,8 +90,8 @@ class Trade(ITrade[int]):
         timestamp: datetime,
         security: Security,
         book: Book,
-        quantity: int | str | Decimal,
-        price: int | str | Decimal,
+        quantity: AnyNumber,
+        price: AnyNumber,
     ) -> Self:
         cur = con.cursor()
         cur.execute(
