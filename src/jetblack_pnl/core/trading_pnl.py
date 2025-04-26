@@ -14,23 +14,23 @@ class TradingPnl(NamedTuple):
     cost: Decimal
     realized: Decimal
 
-    def avg_cost[SecurityKey](self, security: ISecurity[SecurityKey]) -> Decimal:
+    def avg_cost[SecurityT: ISecurity](self, security: SecurityT) -> Decimal:
         return (
             Decimal(0)
             if self.quantity == 0 else
             -self.cost / self.quantity / security.contract_size
         )
 
-    def unrealized[SecurityKey](
+    def unrealized[SecurityT: ISecurity](
             self,
-            security: ISecurity[SecurityKey],
+            security: ISecurity[SecurityT],
             price: Decimal | int
     ) -> Decimal:
         return self.quantity * security.contract_size * price + self.cost
 
-    def strip[SecurityKey](
+    def strip[SecurityT: ISecurity](
             self,
-            security: ISecurity[SecurityKey],
+            security: ISecurity[SecurityT],
             price: Decimal | int
     ) -> PnlStrip:
         return PnlStrip(
