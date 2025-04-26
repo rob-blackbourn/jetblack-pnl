@@ -6,11 +6,11 @@ from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
-class ITrade[Key](Protocol):  # type: ignore
+class ITrade[KeyT](Protocol):  # type: ignore
     """A trade interface"""
 
     @property
-    def key(self) -> Key:
+    def key(self) -> KeyT:
         """A unique id for the trade"""
 
     @property

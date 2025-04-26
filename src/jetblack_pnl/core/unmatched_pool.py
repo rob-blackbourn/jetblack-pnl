@@ -8,36 +8,36 @@ from .trade import ITrade
 
 
 @runtime_checkable
-class IUnmatchedPool[Trade: ITrade, Context](Protocol):  # type: ignore
+class IUnmatchedPool[TradeT: ITrade, ContextT](Protocol):  # type: ignore
     """A pool of unmatched trades"""
 
     def append(
             self,
-            opening: SplitTrade[Trade],
-            context: Context
+            opening: SplitTrade[TradeT],
+            context: ContextT
     ) -> None:
         ...
 
     def insert(
             self,
-            opening: SplitTrade[Trade],
-            context: Context
+            opening: SplitTrade[TradeT],
+            context: ContextT
     ) -> None:
         ...
 
     def pop(
             self,
-            closing: SplitTrade[Trade],
-            context: Context
-    ) -> SplitTrade[Trade]:
+            closing: SplitTrade[TradeT],
+            context: ContextT
+    ) -> SplitTrade[TradeT]:
         ...
 
     def has(
             self,
-            closing: SplitTrade[Trade],
-            context: Context
+            closing: SplitTrade[TradeT],
+            context: ContextT
     ) -> bool:
         ...
 
-    def pool(self, context: Context) -> Sequence[SplitTrade[Trade]]:
+    def pool(self, context: ContextT) -> Sequence[SplitTrade[TradeT]]:
         ...

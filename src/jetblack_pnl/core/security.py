@@ -6,11 +6,11 @@ from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
-class ISecurity[Key](Protocol):
+class ISecurity[KeyT](Protocol):
     """A security interface"""
 
     @property
-    def key(self) -> Key:
+    def key(self) -> KeyT:
         """The key for the security"""
 
     @property

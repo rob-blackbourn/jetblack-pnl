@@ -8,18 +8,18 @@ from .trade import ITrade
 
 
 @runtime_checkable
-class IMatchedPool[Trade: ITrade, Context](Protocol):
+class IMatchedPool[TradeT: ITrade, ContextT](Protocol):
 
     def append(
         self,
-        opening: SplitTrade[Trade],
-        closing: SplitTrade[Trade],
-        context: Context
+        opening: SplitTrade[TradeT],
+        closing: SplitTrade[TradeT],
+        context: ContextT
     ) -> None:
         ...
 
     def pool(
             self,
-            context: Context
-    ) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
+            context: ContextT
+    ) -> Sequence[tuple[SplitTrade[TradeT], SplitTrade[TradeT]]]:
         ...

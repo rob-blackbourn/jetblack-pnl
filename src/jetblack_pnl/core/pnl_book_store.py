@@ -10,32 +10,32 @@ from .trading_pnl import TradingPnl
 from .unmatched_pool import IUnmatchedPool
 
 
-class IPnlBookStore[TSecurity: ISecurity, TBook: IBook, TTrade: ITrade, TContext](Protocol):
+class IPnlBookStore[SecurityT: ISecurity, BookT: IBook, TradeT: ITrade, ContextT](Protocol):
 
     def has(
             self,
-            security: TSecurity,
-            book: TBook,
-            context: TContext
+            security: SecurityT,
+            book: BookT,
+            context: ContextT
     ) -> bool:
         ...
 
     def get(
             self,
-            security: TSecurity,
-            book: TBook,
-            context: TContext
-    ) -> tuple[TradingPnl, IUnmatchedPool[TTrade, TContext], IMatchedPool[TTrade, TContext]]:
+            security: SecurityT,
+            book: BookT,
+            context: ContextT
+    ) -> tuple[TradingPnl, IUnmatchedPool[TradeT, ContextT], IMatchedPool[TradeT, ContextT]]:
         ...
 
     def set(
             self,
-            security: TSecurity,
-            book: TBook,
-            trade: TTrade,
+            security: SecurityT,
+            book: BookT,
+            trade: TradeT,
             pnl: TradingPnl,
-            unmatched: IUnmatchedPool[TTrade, TContext],
-            matched: IMatchedPool[TTrade, TContext],
-            context: TContext
+            unmatched: IUnmatchedPool[TradeT, ContextT],
+            matched: IMatchedPool[TradeT, ContextT],
+            context: ContextT
     ) -> None:
         ...

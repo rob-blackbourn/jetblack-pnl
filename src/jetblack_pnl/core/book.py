@@ -5,9 +5,9 @@ from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
-class IBook[Key](Protocol):
+class IBook[KeyT](Protocol):
     """A book interface"""
 
     @property
-    def key(self) -> Key:
+    def key(self) -> KeyT:
         """The key for the book"""

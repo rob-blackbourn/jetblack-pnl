@@ -6,13 +6,13 @@ from decimal import Decimal
 from .trade import ITrade
 
 
-class SplitTrade[Trade: ITrade]:
+class SplitTrade[TradeT: ITrade]:
     """A split trade can or has been split from a larger trade"""
 
     def __init__(
             self,
             quantity: Decimal,
-            trade: Trade,
+            trade: TradeT,
     ) -> None:
         self._quantity = quantity
         self._trade = trade
@@ -23,7 +23,7 @@ class SplitTrade[Trade: ITrade]:
         return self._quantity
 
     @property
-    def trade(self) -> Trade:
+    def trade(self) -> TradeT:
         """The trade"""
         return self._trade
 
