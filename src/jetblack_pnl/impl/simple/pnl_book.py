@@ -1,4 +1,3 @@
-from decimal import Decimal
 
 from ...core import PnlBook, TradingPnl
 
@@ -20,16 +19,16 @@ class SimplePnlBook(PnlBook[Security, Book, Trade, Context]):
             lambda security, book, context: UnmatchedPool.Fifo()
         )
 
-    def add(
+    def add_trade(
         self,
         security: Security,
         book: Book,
-        quantity: int | Decimal | str,
-        price: int | Decimal | str,
+        trade: Trade,
+        context: None
     ) -> TradingPnl:
-        return self.add_trade(
+        return super().add_trade(
             security,
             book,
-            Trade(quantity, price),
+            trade,
             None
         )
