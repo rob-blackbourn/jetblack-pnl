@@ -168,9 +168,7 @@ def test_long_to_short_fifo_with_profit() -> None:
     assert pnl.realized == 2
     assert len(unmatched) == 0
     assert matched.pool(None) == (
-        (
-            Decimal(-1), Trade(1, 100), Trade(-1, 102)
-        ),
+        (Decimal(-1), Trade(1, 100), Trade(-1, 102)),
     )
 
 
@@ -189,9 +187,7 @@ def test_short_to_long_fifo_with_profit() -> None:
     assert pnl.realized == 2
     assert len(unmatched) == 0
     assert matched.pool(None) == (
-        (
-            Decimal(1), Trade(-1, 102), Trade(1, 100)
-        ),
+        (Decimal(1), Trade(-1, 102), Trade(1, 100)),
     )
 
 
