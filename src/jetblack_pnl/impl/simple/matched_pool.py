@@ -1,9 +1,10 @@
 """A simple implementation of a matched pool"""
 
+from decimal import Decimal
 from typing import Sequence
 
 
-from ...core import SplitTrade, IMatchedPool
+from ...core import IMatchedPool
 
 from .types import Context
 from .trade import Trade
@@ -15,24 +16,27 @@ class MatchedPool(IMatchedPool[Trade, Context]):
     def __init__(
             self,
             pool: Sequence[
-                tuple[SplitTrade[Trade], SplitTrade[Trade]]
+                tuple[Decimal, Trade, Trade]
             ] = ()
     ) -> None:
         self._pool = pool
 
     def append(
             self,
-            opening: SplitTrade[Trade],
-            closing: SplitTrade[Trade],
+            closing_quantity: Decimal,
+            opening_trade: Trade,
+            closing_trade: Trade,
             context: Context
     ) -> None:
-        matched_trade = (opening, closing)
-        self._pool = tuple((*self._pool, matched_trade))
+        self._pool = tuple((
+            *self._pool,
+            (closing_quantity, opening_trade, closing_trade)
+        ))
 
     def pool(
             self,
             context: Context
-    ) -> Sequence[tuple[SplitTrade[Trade], SplitTrade[Trade]]]:
+    ) -> Sequence[tuple[Decimal, Trade, Trade]]:
         """Returns the matched pool"""
         return self._pool
 

@@ -1,9 +1,9 @@
 """An interface for a matched pool.
 """
 
+from decimal import Decimal
 from typing import Protocol, Sequence, runtime_checkable
 
-from .split_trade import SplitTrade
 from .trade import ITrade
 
 
@@ -12,8 +12,9 @@ class IMatchedPool[TradeT: ITrade, ContextT](Protocol):
 
     def append(
         self,
-        opening: SplitTrade[TradeT],
-        closing: SplitTrade[TradeT],
+        closing_quantity: Decimal,
+        opening_trade: TradeT,
+        closing_trade: TradeT,
         context: ContextT
     ) -> None:
         ...
@@ -21,5 +22,5 @@ class IMatchedPool[TradeT: ITrade, ContextT](Protocol):
     def pool(
             self,
             context: ContextT
-    ) -> Sequence[tuple[SplitTrade[TradeT], SplitTrade[TradeT]]]:
+    ) -> Sequence[tuple[Decimal, TradeT, TradeT]]:
         ...

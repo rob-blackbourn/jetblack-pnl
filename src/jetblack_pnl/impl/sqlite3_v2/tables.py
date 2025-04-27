@@ -95,6 +95,7 @@ def create_table_matched_trade(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS matched_trade
         (
+            closing_quantity    DECIMAL     NOT NULL,
             opening_trade_id    INTEGER     NOT NULL,
             closing_trade_id    INTEGER     NOT NULL,
 

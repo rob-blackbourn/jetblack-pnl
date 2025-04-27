@@ -152,7 +152,13 @@ def _match[TradeT: ITrade, SecurityT: ISecurity, ContextT](
         context
     )
 
-    matched.append(opening_trade, closing_trade, context)
+    assert opening_trade.quantity == -closing_trade.quantity
+    matched.append(
+        closing_trade.quantity,
+        opening_trade.trade,
+        closing_trade.trade,
+        context
+    )
 
     # Note that the open will have the opposite sign to the close.
     close_value = (
