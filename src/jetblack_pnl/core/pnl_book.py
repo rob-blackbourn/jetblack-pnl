@@ -33,6 +33,14 @@ class PnlBook[SecurityT: ISecurity, BookT: IBook, TradeT: ITrade, ContextT]:
         self._unmatched_factory = unmatched_factory
         self._store = store
 
+    def get(
+            self,
+            security: SecurityT,
+            book: BookT,
+            context: ContextT
+    ) -> tuple[TradingPnl, IUnmatchedPool[TradeT, ContextT], IMatchedPool[TradeT, ContextT]]:
+        return self._store.get(security, book, context)
+
     def add_trade(
         self,
         security: SecurityT,
