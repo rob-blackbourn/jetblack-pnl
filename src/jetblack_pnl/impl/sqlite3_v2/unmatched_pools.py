@@ -59,7 +59,7 @@ class UnmatchedPool:
             context.execute(
                 """
                 SELECT
-                    t.trade_id,
+                    ut.trade_id,
                     ut.quantity,
                     ut.valid_from
                 FROM
@@ -69,43 +69,54 @@ class UnmatchedPool:
                 ON
                     t.trade_id = ut.trade_id
                 WHERE
-                    ut.valid_from <= ?
+                    t.security_id = ?
+                AND
+                    t.book_id = ?
                 AND
                     ut.valid_to = ?
                 ORDER BY
-                    t.timestamp,
                     t.trade_id
                 LIMIT
                     1;
                 """,
-                (closing.trade.key, MAX_VALID_TO)
+                (self._security.key, self._book.key, MAX_VALID_TO)
             )
             row = context.fetchone()
             if row is None:
                 raise RuntimeError("no unmatched trades")
             trade_id, quantity, valid_from = row
 
-            # Remove from unmatched by setting the valid_to to the trade's
-            # timestamp
+            # Remove from unmatched by setting the valid_to to the trade id
+            # of the closing trade.
             context.execute(
                 """
                 update
                     unmatched_trade
                 SET
                     valid_to = ?
+                FROM
+                    trade
                 WHERE
-                    trade_id = ?
+                    trade.trade_id = unmatched_trade.trade_id
                 AND
-                    quantity = ?
+                    unmatched_trade.trade_id = ?
                 AND
-                    valid_from = ?
+                    unmatched_trade.quantity = ?
                 AND
-                    valid_to = ?
+                    trade.security_id = ?
+                AND
+                    trade.book_id = ?
+                AND
+                    unmatched_trade.valid_from = ?
+                AND
+                    unmatched_trade.valid_to = ?
                 """,
                 (
                     closing.trade.key,
                     trade_id,
                     quantity,
+                    self._security.key,
+                    self._book.key,
                     valid_from,
                     MAX_VALID_TO
                 )
@@ -132,12 +143,11 @@ class UnmatchedPool:
                 AND
                     t.book_id = ?
                 WHERE
-                    ut.valid_from <= ? AND ? < ut.valid_to
+                    ut.valid_to > ?
                 """,
                 (
                     self._security.key,
                     self._book.key,
-                    closing.trade.key,
                     closing.trade.key
                 )
             )
@@ -154,8 +164,8 @@ class UnmatchedPool:
             context.execute(
                 """
                 SELECT
-                    trade_id,
-                    quantity
+                    ut.trade_id,
+                    ut.quantity
                 FROM
                     unmatched_trade AS ut
                 JOIN
@@ -167,9 +177,9 @@ class UnmatchedPool:
                 AND
                     t.book_id = ?
                 AND
-                    ut.valid_from <= ? AND ? < ut.valid_to
+                    ut.valid_to > ?
                 """,
-                (self._security.key, self._book.key, last_trade_id, MAX_VALID_TO)
+                (self._security.key, self._book.key, last_trade_id)
             )
 
             def make_unmatched(
@@ -200,7 +210,7 @@ class UnmatchedPool:
                 """,
                 (self._security.key, self._book.key)
             )
-            last_trade_id = context.fetchone()
-            if last_trade_id is None:
+            row = context.fetchone()
+            if row is None:
                 return ()
-            return self.pool_asof(last_trade_id, context)
+            return self.pool_asof(row[0], context)

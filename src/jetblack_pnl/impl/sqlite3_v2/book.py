@@ -41,27 +41,7 @@ class Book(IBook[int]):
         row = cur.fetchone()
         if row is None:
             raise KeyError("Book not found")
-        name = row
-        return cls(key, name)
-
-    @classmethod
-    def load_by_name(cls, con: Connection, name: str) -> Self:
-        cur = con.cursor()
-        cur.execute(
-            """
-            SELECT
-                book_id
-            FROM
-                book
-            WHERE
-                name = ?
-            """,
-            (name,)
-        )
-        row = cur.fetchone()
-        if row is None:
-            raise KeyError("Book not found")
-        key = row
+        name = row[0]
         return cls(key, name)
 
     @classmethod

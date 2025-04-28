@@ -6,6 +6,7 @@ from decimal import Decimal
 import sqlite3
 from typing import Generator
 
+from jetblack_pnl.core import SplitTrade
 from jetblack_pnl.impl.sqlite3_v2 import (
     create_tables,
     register_handlers,
@@ -45,7 +46,12 @@ def test_sqlite3_v2() -> None:
         trade = Trade.create(con, ts, apple, tech, 6, 100)
         with cursor(con) as cur:
             pnl = pnl_book.add_trade(apple, tech, trade, cur)
-        assert pnl == (6, -600, 0)
+            _, unmatched, matched = pnl_book.get(apple, tech, cur)
+            assert pnl == (6, -600, 0)
+            assert unmatched.pool(cur) == (
+                SplitTrade(Decimal(6), trade),
+            )
+            assert matched.pool(cur) == ()
 
         # Buy 6 @ 106
         ts += timedelta(seconds=1)

@@ -29,27 +29,6 @@ class MatchedPool(IMatchedPool[Trade, Cursor]):
             closing_trade: Trade,
             context: Cursor
     ) -> None:
-        # Stub out the current latest.
-        context.execute(
-            """
-            UPDATE
-                matched_trade
-            SET
-                valid_to = ?
-            FROM
-                trade
-            WHERE
-                trade.trade_id = matched_trade.valid_from
-            AND
-                trade.security_id = ?
-            AND
-                trade.book_id = ?
-            AND
-                matched_trade.valid_to = ?
-            """,
-            (closing_trade.key, self._security.key, self._book.key, MAX_VALID_TO)
-        )
-
         # Insert the new match.
         context.execute(
             """
@@ -84,7 +63,7 @@ class MatchedPool(IMatchedPool[Trade, Cursor]):
         context.execute(
             """
             SELECT
-                mt.quantity,
+                mt.closing_quantity,
                 mt.opening_trade_id,
                 mt.closing_trade_id
             FROM
@@ -98,9 +77,9 @@ class MatchedPool(IMatchedPool[Trade, Cursor]):
             AND
                 ct.book_id = ?
             AND
-                mt.valid_from < ? AND mt.valid_to <= ?
+                mt.valid_to > ?
             """,
-            (self._security.key, self._book.key, last_trade_id, last_trade_id)
+            (self._security.key, self._book.key, last_trade_id)
         )
 
         def make_match(
@@ -138,7 +117,8 @@ class MatchedPool(IMatchedPool[Trade, Cursor]):
             """,
             (self._security.key, self._book.key)
         )
-        last_trade_id = context.fetchone()
-        if last_trade_id is None:
+        row = context.fetchone()
+        if row is None:
             return ()
+        last_trade_id = row[0]
         return self.pool_asof(last_trade_id, context)

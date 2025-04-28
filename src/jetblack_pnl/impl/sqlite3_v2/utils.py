@@ -17,4 +17,4 @@ def to_decimal(number: AnyNumber) -> Decimal:
     return number if isinstance(number, Decimal) else Decimal(number)
 
 
-MAX_VALID_TO = 2 ** 63 - 1
+MAX_VALID_TO = 2 ** 32 - 1
