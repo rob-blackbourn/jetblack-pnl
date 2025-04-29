@@ -23,14 +23,14 @@ class TradingPnl(NamedTuple):
 
     def unrealized[SecurityT: ISecurity](
             self,
-            security: ISecurity[SecurityT],
+            security: SecurityT,
             price: Decimal | int
     ) -> Decimal:
         return self.quantity * security.contract_size * price + self.cost
 
     def strip[SecurityT: ISecurity](
             self,
-            security: ISecurity[SecurityT],
+            security: SecurityT,
             price: Decimal | int
     ) -> PnlStrip:
         return PnlStrip(
