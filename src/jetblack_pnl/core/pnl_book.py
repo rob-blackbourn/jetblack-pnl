@@ -15,7 +15,7 @@ from .unmatched_pool import IUnmatchedPool
 
 
 class PnlBook[SecurityT: ISecurity, BookT: IBook, TradeT: ITrade, ContextT]:
-    """A simple implementation of a PnL book"""
+    """A generic implementation of a PnL book"""
 
     def __init__(
             self,
