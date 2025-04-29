@@ -61,8 +61,13 @@ class Trade(ITrade[int]):
             value.key == self.key
         )
 
+    def __str__(self) -> str:
+        prefix = f"[{self.key} {self.timestamp}]"
+        side = "buy" if self.quantity > 0 else "sell"
+        return f"{prefix}: {side} {abs(self.quantity)} @ {self.price}"
+
     def __repr__(self) -> str:
-        return f"[{self.key}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
+        return str(self)
 
     @classmethod
     def load(cls, cur: Cursor, key: int) -> Optional[Self]:
