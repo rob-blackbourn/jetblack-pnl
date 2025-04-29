@@ -248,7 +248,7 @@ def _add_cash_trade[TradeT: ITrade](
 ) -> TradingPnl:
     # Cash trades are always realized.
     return TradingPnl(
-        Decimal(1),
+        Decimal(0),
         Decimal(0),
         trd.quantity + pnl.realized
     )

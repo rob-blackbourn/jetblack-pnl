@@ -544,3 +544,13 @@ def test_fraction_quantities() -> None:
     assert pnl.quantity == 2
     pnl = add_trade(pnl, Trade("-1.5", "2.05"), sec, unmatched, matched, None)
     assert pnl.quantity == Decimal("0.5")
+
+
+def test_cash() -> None:
+    usd = Security("USD", 1, True)
+    matched = MatchedPool()
+    unmatched = UnmatchedPool.Fifo()
+    pnl = TradingPnl(Decimal(0), Decimal(0), Decimal(0))
+
+    pnl = add_trade(pnl, Trade(1000, 1), usd, unmatched, matched, None)
+    assert pnl == (0, 0, 1000)
