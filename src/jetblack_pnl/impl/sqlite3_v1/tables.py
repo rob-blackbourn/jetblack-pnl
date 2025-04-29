@@ -12,6 +12,7 @@ def create_table_security(cur: Cursor) -> None:
             name            VARCHAR(32)     NOT NULL,
             contract_size   DECIMAL(12, 0)  NOT NULL,
             is_cash         BOOLEAN         NOT NULL,
+            ccy             CHAR(3)         NOT NULL,
 
             UNIQUE (name)
         )

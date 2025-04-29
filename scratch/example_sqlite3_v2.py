@@ -83,7 +83,7 @@ def main(database: str | Path):
         # book.drop()
         create_tables(con.cursor())
 
-        apple = Security.create(con, 'AAPL', Decimal(1), False)
+        apple = Security.create(con, 'AAPL', Decimal(1), False, "USD")
         tech = Book.create(con, 'tech')
 
         # Buy 6 @ 100

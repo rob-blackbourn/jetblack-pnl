@@ -42,7 +42,7 @@ def main(database: str | Path):
     # trade_db.drop()
     trade_db.create_tables()
 
-    apple = Security.create(con, 'AAPL', Decimal(1), False)
+    apple = Security.create(con, 'AAPL', Decimal(1), False, "USD")
     tech = Book.create(con, 'tech')
 
     # Buy 6 @ 100

@@ -17,12 +17,14 @@ class Security(ISecurity[int]):
             key: int,
             name: str,
             contract_size: AnyNumber,
-            is_cash: bool
+            is_cash: bool,
+            ccy: str
     ) -> None:
         self._key = key
         self._name = name
         self._contract_size = to_decimal(contract_size)
         self._is_cash = is_cash
+        self._ccy = ccy
 
     @property
     def key(self) -> int:
@@ -40,6 +42,10 @@ class Security(ISecurity[int]):
     def is_cash(self) -> bool:
         return self._is_cash
 
+    @property
+    def ccy(self) -> str:
+        return self._ccy
+
     def __repr__(self):
         return self.name
 
@@ -50,7 +56,8 @@ class Security(ISecurity[int]):
             SELECT
                 name,
                 contract_size,
-                is_cash
+                is_cash,
+                ccy
             FROM
                 security
             WHERE
@@ -61,8 +68,8 @@ class Security(ISecurity[int]):
         row = cur.fetchone()
         if row is None:
             raise KeyError("Security not found")
-        name, contract_size, is_cash = row
-        return cls(key, name, contract_size, is_cash)
+        name, contract_size, is_cash, ccy = row
+        return cls(key, name, contract_size, is_cash, ccy)
 
     @classmethod
     def create(
@@ -70,17 +77,18 @@ class Security(ISecurity[int]):
             con: Connection,
             name: str,
             contract_size: AnyNumber,
-            is_cash: bool
+            is_cash: bool,
+            ccy: str
     ) -> 'Security':
         cur = con.cursor()
         contract_size = to_decimal(contract_size)
         cur.execute(
             """
-            INSERT INTO security(name, contract_size, is_cash)
-            VALUES (?, ?, ?)
+            INSERT INTO security(name, contract_size, is_cash, ccy)
+            VALUES (?, ?, ?, ?)
             """,
-            (name, contract_size, is_cash)
+            (name, contract_size, is_cash, ccy)
         )
         key = cur.lastrowid
         assert key is not None
-        return cls(key, name, contract_size, is_cash)
+        return cls(key, name, contract_size, is_cash, ccy)
