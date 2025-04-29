@@ -6,7 +6,14 @@ from typing import NamedTuple
 
 
 from .security import ISecurity
-from .pnl_strip import PnlStrip
+
+
+class PnlStrip(NamedTuple):
+    quantity: Decimal
+    avg_cost: Decimal
+    price: Decimal
+    realized: Decimal
+    unrealized: Decimal
 
 
 class TradingPnl(NamedTuple):
