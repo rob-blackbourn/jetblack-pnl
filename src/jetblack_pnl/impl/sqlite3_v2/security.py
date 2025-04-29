@@ -65,28 +65,6 @@ class Security(ISecurity[int]):
         return cls(key, name, contract_size, is_cash)
 
     @classmethod
-    def load_by_name(cls, con: Connection, name: str) -> 'Security':
-        cur = con.cursor()
-        cur.execute(
-            """
-            SELECT
-                security_id,
-                contract_size,
-                is_cash
-            FROM
-                security
-            WHERE
-                name = ?
-            """,
-            (name,)
-        )
-        row = cur.fetchone()
-        if row is None:
-            raise KeyError("Security not found")
-        key, contract_size, is_cash = row
-        return cls(key, name, contract_size, is_cash)
-
-    @classmethod
     def create(
             cls,
             con: Connection,

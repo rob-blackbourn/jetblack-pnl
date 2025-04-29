@@ -11,16 +11,16 @@ class SplitTrade[TradeT: ITrade]:
 
     def __init__(
             self,
-            quantity: Decimal,
+            remaining_quantity: Decimal,
             trade: TradeT,
     ) -> None:
-        self._quantity = quantity
+        self._remaining_quantity = remaining_quantity
         self._trade = trade
 
     @property
-    def quantity(self) -> Decimal:
+    def remaining_quantity(self) -> Decimal:
         """The traded quantity"""
-        return self._quantity
+        return self._remaining_quantity
 
     @property
     def trade(self) -> TradeT:
@@ -30,10 +30,10 @@ class SplitTrade[TradeT: ITrade]:
     def __eq__(self, value: object) -> bool:
         return (
             isinstance(value, SplitTrade) and
-            value.quantity == self.quantity and
+            value.remaining_quantity == self.remaining_quantity and
             value.trade == self.trade
         )
 
     def __repr__(self) -> str:
-        side = 'buy' if self.quantity >= 0 else 'sell'
-        return f"{side} {abs(self.quantity)} of trade: {self.trade}"
+        side = 'buy' if self.remaining_quantity >= 0 else 'sell'
+        return f"{side} {abs(self.remaining_quantity)} of trade: {self.trade}"

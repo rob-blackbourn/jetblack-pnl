@@ -55,6 +55,12 @@ class Trade(ITrade[int]):
     def price(self) -> Decimal:
         return self._price
 
+    def __eq__(self, value: object) -> bool:
+        return (
+            isinstance(value, Trade) and
+            value.key == self.key
+        )
+
     def __repr__(self) -> str:
         return f"[{self.key}: {self.timestamp.isoformat()}] {self.quantity} {self.security} @ {self.price} in {self.book}"
 

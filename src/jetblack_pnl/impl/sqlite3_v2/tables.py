@@ -77,13 +77,13 @@ def create_table_unmatched_trade(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS unmatched_trade
         (
-            trade_id    INTEGER         NOT NULL,
-            quantity    DECIMAL         NOT NULL,
+            trade_id            INTEGER NOT NULL,
+            remaining_quantity  DECIMAL NOT NULL,
 
-            valid_from  INT             NOT NULL,
-            valid_to    INT             NOT NULL,
+            valid_from          INT     NOT NULL,
+            valid_to            INT     NOT NULL,
 
-            PRIMARY KEY (valid_from, valid_to, trade_id, quantity),
+            PRIMARY KEY (valid_from, valid_to, trade_id, remaining_quantity),
             FOREIGN KEY (trade_id) REFERENCES trade(trade_id)
         );
         """
@@ -95,6 +95,7 @@ def create_table_matched_trade(cur: Cursor) -> None:
         """
         CREATE TABLE IF NOT EXISTS matched_trade
         (
+            closing_quantity    DECIMAL     NOT NULL,
             opening_trade_id    INTEGER     NOT NULL,
             closing_trade_id    INTEGER     NOT NULL,
 

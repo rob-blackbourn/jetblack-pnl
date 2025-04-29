@@ -11,7 +11,7 @@ from jetblack_pnl.impl.simple import (
 )
 
 
-def test_long_to_short_with_splits_best_price():
+def test_long_to_short_with_splits_best_price() -> None:
     """long to short, splits, best price"""
 
     sec = Security("aapl", 1, False)
@@ -54,7 +54,7 @@ def test_long_to_short_with_splits_best_price():
     assert pnl.realized == 54
 
 
-def test_long_to_short_with_splits_worst_price():
+def test_long_to_short_with_splits_worst_price() -> None:
     """long to short, splits, worst price"""
 
     sec = Security("aapl", 1, False)
@@ -87,7 +87,7 @@ def test_long_to_short_with_splits_worst_price():
     assert pnl.realized == 0
 
 
-def test_long_to_short_with_splits_fifo():
+def test_long_to_short_with_splits_fifo() -> None:
     """long to short, splits, fifo"""
 
     sec = Security("aapl", 1, False)
@@ -120,7 +120,7 @@ def test_long_to_short_with_splits_fifo():
     assert pnl.realized == 27
 
 
-def test_long_to_short_with_splits_lifo():
+def test_long_to_short_with_splits_lifo() -> None:
     """long to short, splits, fifo"""
 
     sec = Security("aapl", 1, False)
@@ -153,7 +153,7 @@ def test_long_to_short_with_splits_lifo():
     assert pnl.realized == 9
 
 
-def test_long_to_short_fifo_with_profit():
+def test_long_to_short_fifo_with_profit() -> None:
     """Buy 1 @ 100, then sell 1 @ 102 making 2"""
 
     sec = Security("aapl", 1, False)
@@ -167,16 +167,12 @@ def test_long_to_short_fifo_with_profit():
     assert pnl.cost == 0
     assert pnl.realized == 2
     assert len(unmatched) == 0
-    expected = MatchedPool((
-        (
-            SplitTrade(Decimal(1), Trade(1, 100)),
-            SplitTrade(Decimal(-1), Trade(-1, 102))
-        ),
-    ))
-    assert matched == expected
+    assert matched.pool(None) == (
+        (Decimal(-1), Trade(1, 100), Trade(-1, 102)),
+    )
 
 
-def test_short_to_long_fifo_with_profit():
+def test_short_to_long_fifo_with_profit() -> None:
     """Sell 1 @ 102, then buy back 1 @ 101 making 2"""
 
     sec = Security("aapl", 1, False)
@@ -190,15 +186,12 @@ def test_short_to_long_fifo_with_profit():
     assert pnl.cost == 0
     assert pnl.realized == 2
     assert len(unmatched) == 0
-    assert matched == MatchedPool((
-        (
-            SplitTrade(Decimal(-1), Trade(-1, 102)),
-            SplitTrade(Decimal(1), Trade(1, 100))
-        ),
-    ))
+    assert matched.pool(None) == (
+        (Decimal(1), Trade(-1, 102), Trade(1, 100)),
+    )
 
 
-def test_long_to_short_fifo_with_loss():
+def test_long_to_short_fifo_with_loss() -> None:
     """Buy 1 @ 102, then sell 1 @ 100 loosing 2"""
 
     sec = Security("aapl", 1, False)
@@ -212,15 +205,14 @@ def test_long_to_short_fifo_with_loss():
     assert pnl.cost == 0
     assert pnl.realized == -2
     assert len(unmatched) == 0
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 102)),
-            SplitTrade(Decimal(-1), Trade(-1, 100))
+            Decimal(-1), Trade(1, 102), Trade(-1, 100)
         ),
-    ))
+    )
 
 
-def test_short_to_long_fifo_with_loss():
+def test_short_to_long_fifo_with_loss() -> None:
     """Sell 1 @ 100, then buy back 1 @ 102 loosing 2"""
 
     sec = Security("aapl", 1, False)
@@ -234,15 +226,14 @@ def test_short_to_long_fifo_with_loss():
     assert pnl.cost == 0
     assert pnl.realized == -2
     assert len(unmatched) == 0
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(-1), Trade(-1, 100)),
-            SplitTrade(Decimal(1), Trade(1, 102))
+            Decimal(1), Trade(-1, 100), Trade(1, 102)
         ),
-    ))
+    )
 
 
-def test_long_sell_fifo_through_flat():
+def test_long_sell_fifo_through_flat() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -254,18 +245,17 @@ def test_long_sell_fifo_through_flat():
     assert pnl.quantity == -1
     assert pnl.cost == 102
     assert pnl.realized == 1
-    assert unmatched == UnmatchedPool.Fifo((
+    assert unmatched.pool(None) == (
         SplitTrade(Decimal(-1), Trade(-2, 102)),
-    ))
-    assert matched == MatchedPool((
+    )
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 101)),
-            SplitTrade(Decimal(-1), Trade(-2, 102))
+            Decimal(-1), Trade(1, 101), Trade(-2, 102)
         ),
-    ))
+    )
 
 
-def test_short_buy_fifo_through_flat():
+def test_short_buy_fifo_through_flat() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -277,18 +267,17 @@ def test_short_buy_fifo_through_flat():
     assert pnl.quantity == 1
     assert pnl.cost == -101
     assert pnl.realized == 1
-    assert unmatched == UnmatchedPool.Fifo((
+    assert unmatched.pool(None) == (
         SplitTrade(Decimal(1), Trade(2, 101)),
-    ))
-    assert matched == MatchedPool((
+    )
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(-1), Trade(-1, 102)),
-            SplitTrade(Decimal(1), Trade(2, 101))
+            Decimal(1), Trade(-1, 102), Trade(2, 101)
         ),
-    ))
+    )
 
 
-def test_one_buy_many_sells_fifo():
+def test_one_buy_many_sells_fifo() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -305,19 +294,17 @@ def test_one_buy_many_sells_fifo():
     assert pnl.cost == 0
     assert pnl.realized == 20
     assert len(unmatched) == 0
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(5), Trade(10, 101)),
-            SplitTrade(Decimal(-5), Trade(-5, 102))
+            Decimal(-5), Trade(10, 101), Trade(-5, 102)
         ),
         (
-            SplitTrade(Decimal(5), Trade(10, 101)),
-            SplitTrade(Decimal(-5), Trade(-5, 104))
+            Decimal(-5), Trade(10, 101), Trade(-5, 104)
         ),
-    ))
+    )
 
 
-def test_pnl():
+def test_pnl() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -350,7 +337,7 @@ def test_pnl():
     assert pnl.strip(sec, 102) == (0, 0, 102, 40, 0)
 
 
-def test_many_buys_one_sell_fifo():
+def test_many_buys_one_sell_fifo() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -363,28 +350,23 @@ def test_many_buys_one_sell_fifo():
     pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 100)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 100), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 102)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 102), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 101)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 101), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 104)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 104), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 103)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 103), Trade(-5, 104)
         ),
-    ))
+    )
 
 
 def test_many_buys_one_sell_lifo():
@@ -400,28 +382,23 @@ def test_many_buys_one_sell_lifo():
     pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 103)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 103), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 104)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 104), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 101)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 101), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 102)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 102), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 100)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 100), Trade(-5, 104)
         ),
-    ))
+    )
 
 
 def test_many_buys_one_sell_best_price():
@@ -437,31 +414,26 @@ def test_many_buys_one_sell_best_price():
     pnl = add_trade(pnl, Trade(1, 104), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
-    assert matched == MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 100)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 100), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 101)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 101), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 102)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 102), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 103)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 103), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 104)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 104), Trade(-5, 104)
         ),
-    ))
+    )
 
 
-def test_many_sells_one_buy_best_price():
+def test_many_sells_one_buy_best_price() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -475,30 +447,23 @@ def test_many_sells_one_buy_best_price():
     pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched, None)
 
-    expected = MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(-1), Trade(-1, 104)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 104), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 103)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 103), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 102)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 102), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 101)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 101), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 100)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 100), Trade(5, 104)
         ),
-    ))
-
-    assert matched == expected
+    )
 
 
 def test_many_buys_one_sell_worst_price():
@@ -515,33 +480,26 @@ def test_many_buys_one_sell_worst_price():
     pnl = add_trade(pnl, Trade(1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(-5, 104), sec, unmatched, matched, None)
 
-    expected = MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(1), Trade(1, 104)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 104), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 103)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 103), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 102)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 102), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 101)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 101), Trade(-5, 104)
         ),
         (
-            SplitTrade(Decimal(1), Trade(1, 100)),
-            SplitTrade(Decimal(-1), Trade(-5, 104))
+            Decimal(-1), Trade(1, 100), Trade(-5, 104)
         ),
-    ))
-
-    assert matched == expected
+    )
 
 
-def test_many_sells_one_buy_worst_price():
+def test_many_sells_one_buy_worst_price() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()
@@ -555,32 +513,26 @@ def test_many_sells_one_buy_worst_price():
     pnl = add_trade(pnl, Trade(-1, 103), sec, unmatched, matched, None)
     pnl = add_trade(pnl, Trade(5, 104), sec, unmatched, matched, None)
 
-    expected = MatchedPool((
+    assert matched.pool(None) == (
         (
-            SplitTrade(Decimal(-1), Trade(-1, 100)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 100), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 101)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 101), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 102)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 102), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 103)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 103), Trade(5, 104)
         ),
         (
-            SplitTrade(Decimal(-1), Trade(-1, 104)),
-            SplitTrade(Decimal(1), Trade(5, 104))
+            Decimal(1), Trade(-1, 104), Trade(5, 104)
         ),
-    ))
-    assert matched == expected
+    )
 
 
-def test_fraction_quantities():
+def test_fraction_quantities() -> None:
 
     sec = Security("aapl", 1, False)
     matched = MatchedPool()

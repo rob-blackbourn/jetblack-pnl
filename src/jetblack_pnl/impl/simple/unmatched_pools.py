@@ -103,7 +103,7 @@ class UnmatchedPool:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[0], self._pool[1:])
-                if closing.quantity < 0
+                if closing.remaining_quantity < 0
                 else (self._pool[-1], self._pool[:-1])
             )
             return trade
@@ -145,7 +145,7 @@ class UnmatchedPool:
             self._pool = sorted(self._pool, key=lambda x: x.trade.price)
             trade, self._pool = (
                 (self._pool[-1], self._pool[:-1])
-                if closing.quantity <= 0
+                if closing.remaining_quantity <= 0
                 else (self._pool[0], self._pool[1:])
             )
             return trade
