@@ -6,7 +6,7 @@ from typing import Sequence
 
 from ...core import TradingPnl, ISecurity, IBook
 
-MAX_VALID_TO = 2 ** 63 - 1
+from .utils import MAX_VALID_TO
 
 
 def has_pnl(

@@ -1,4 +1,4 @@
-"""Matched and unmatched pools"""
+"""Matched pools"""
 
 from decimal import Decimal
 from sqlite3 import Cursor

@@ -72,8 +72,8 @@ def _extend_position[TradeT: ITrade, SecurityT: ISecurity, ContextT](
     Returns:
         TradingPnl: The new P/L
     """
-    quantity = pnl.quantity + trd.quantity
-    cost = pnl.cost - trd.quantity * sec.contract_size * trd.trade.price
+    quantity = pnl.quantity + trd.remaining_quantity
+    cost = pnl.cost - trd.remaining_quantity * sec.contract_size * trd.trade.price
     unmatched.append(trd, context)
 
     return TradingPnl(
@@ -91,7 +91,7 @@ def _find_opening_trade[TradeT: ITrade, ContextT](
     # Select an opening trade.
     opening_trade = unmatched.pop(closing_trade, context)
 
-    if abs(closing_trade.quantity) > abs(opening_trade.quantity):
+    if abs(closing_trade.remaining_quantity) > abs(opening_trade.remaining_quantity):
 
         # The closing trade is larger than the opening trade.
         # Split the closing trade into two: one of the same size as the opening
@@ -99,15 +99,15 @@ def _find_opening_trade[TradeT: ITrade, ContextT](
 
         matched_opening_trade = opening_trade
         matched_closing_trade = SplitTrade(
-            -opening_trade.quantity,
+            -opening_trade.remaining_quantity,
             closing_trade.trade,
         )
         unmatched_closing_trade = SplitTrade(
-            closing_trade.quantity - -opening_trade.quantity,
+            closing_trade.remaining_quantity - -opening_trade.remaining_quantity,
             closing_trade.trade,
         )
 
-    elif abs(closing_trade.quantity) < abs(opening_trade.quantity):
+    elif abs(closing_trade.remaining_quantity) < abs(opening_trade.remaining_quantity):
 
         # The closing trade is smaller than the opening trade.
         # Split the opening trade into two: one of the same size as the closing
@@ -115,12 +115,12 @@ def _find_opening_trade[TradeT: ITrade, ContextT](
         # opening trade to the pool.
 
         matched_opening_trade = SplitTrade(
-            -closing_trade.quantity,
+            -closing_trade.remaining_quantity,
             opening_trade.trade,
         )
         matched_closing_trade = closing_trade
         unmatched_opening_trade = SplitTrade(
-            opening_trade.quantity + closing_trade.quantity,
+            opening_trade.remaining_quantity + closing_trade.remaining_quantity,
             opening_trade.trade,
         )
         unmatched.insert(unmatched_opening_trade, context)
@@ -152,9 +152,9 @@ def _match[TradeT: ITrade, SecurityT: ISecurity, ContextT](
         context
     )
 
-    assert opening_trade.quantity == -closing_trade.quantity
+    assert opening_trade.remaining_quantity == -closing_trade.remaining_quantity
     matched.append(
-        closing_trade.quantity,
+        closing_trade.remaining_quantity,
         opening_trade.trade,
         closing_trade.trade,
         context
@@ -162,14 +162,14 @@ def _match[TradeT: ITrade, SecurityT: ISecurity, ContextT](
 
     # Note that the open will have the opposite sign to the close.
     close_value = (
-        closing_trade.quantity * sec.contract_size * closing_trade.trade.price
+        closing_trade.remaining_quantity * sec.contract_size * closing_trade.trade.price
     )
     open_cost = -(
-        opening_trade.quantity * sec.contract_size * opening_trade.trade.price
+        opening_trade.remaining_quantity * sec.contract_size * opening_trade.trade.price
     )
 
     pnl = TradingPnl(
-        pnl.quantity - opening_trade.quantity,
+        pnl.quantity - opening_trade.remaining_quantity,
         pnl.cost - open_cost,
         pnl.realized + (open_cost - close_value),
     )
@@ -185,7 +185,7 @@ def _reduce_position[TradeT: ITrade, SecurityT: ISecurity, ContextT](
         matched: IMatchedPool[TradeT, ContextT],
         context: ContextT
 ) -> TradingPnl:
-    while closing is not None and closing.quantity != 0 and unmatched.has(closing, context):
+    while closing is not None and closing.remaining_quantity != 0 and unmatched.has(closing, context):
         closing, pnl = _match(
             pnl,
             closing,
@@ -195,7 +195,7 @@ def _reduce_position[TradeT: ITrade, SecurityT: ISecurity, ContextT](
             context
         )
 
-    if closing is not None and closing.quantity != 0:
+    if closing is not None and closing.remaining_quantity != 0:
         pnl = _add_pnl_trade(
             pnl,
             closing,
@@ -220,9 +220,9 @@ def _add_pnl_trade[TradeT: ITrade, SecurityT: ISecurity, ContextT](
         # We are flat
         pnl.quantity == 0 or
         # We are long and buying
-        (pnl.quantity > 0 and trd.quantity > 0) or
+        (pnl.quantity > 0 and trd.remaining_quantity > 0) or
         # We are short and selling.
-        (pnl.quantity < 0 and trd.quantity < 0)
+        (pnl.quantity < 0 and trd.remaining_quantity < 0)
     ):
         return _extend_position(
             pnl,

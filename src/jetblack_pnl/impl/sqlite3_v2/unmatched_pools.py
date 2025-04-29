@@ -33,7 +33,7 @@ class UnmatchedPool:
                 """
                 INSERT INTO unmatched_trade(
                     trade_id,
-                    quantity,
+                    remaining_quantity,
                     valid_from,
                     valid_to
                 ) VALUES (
@@ -45,7 +45,7 @@ class UnmatchedPool:
                 """,
                 (
                     market_trade.key,
-                    opening.quantity,
+                    opening.remaining_quantity,
                     market_trade.key,
                     MAX_VALID_TO
                 )
@@ -60,7 +60,7 @@ class UnmatchedPool:
                 """
                 SELECT
                     ut.trade_id,
-                    ut.quantity,
+                    ut.remaining_quantity,
                     ut.valid_from
                 FROM
                     unmatched_trade AS ut
@@ -84,7 +84,7 @@ class UnmatchedPool:
             row = context.fetchone()
             if row is None:
                 raise RuntimeError("no unmatched trades")
-            trade_id, quantity, valid_from = row
+            trade_id, remaining_quantity, valid_from = row
 
             # Remove from unmatched by setting the valid_to to the trade id
             # of the closing trade.
@@ -101,7 +101,7 @@ class UnmatchedPool:
                 AND
                     unmatched_trade.trade_id = ?
                 AND
-                    unmatched_trade.quantity = ?
+                    unmatched_trade.remaining_quantity = ?
                 AND
                     trade.security_id = ?
                 AND
@@ -114,7 +114,7 @@ class UnmatchedPool:
                 (
                     closing.trade.key,
                     trade_id,
-                    quantity,
+                    remaining_quantity,
                     self._security.key,
                     self._book.key,
                     valid_from,
@@ -124,7 +124,7 @@ class UnmatchedPool:
             market_trade = Trade.load(context, trade_id)
             if market_trade is None:
                 raise RuntimeError("unable to find market trade")
-            pnl_trade = SplitTrade(quantity, market_trade)
+            pnl_trade = SplitTrade(remaining_quantity, market_trade)
             return pnl_trade
 
         def has(self, closing: SplitTrade[Trade], context: Cursor) -> bool:
@@ -165,7 +165,7 @@ class UnmatchedPool:
                 """
                 SELECT
                     ut.trade_id,
-                    ut.quantity
+                    ut.remaining_quantity
                 FROM
                     unmatched_trade AS ut
                 JOIN
@@ -184,16 +184,16 @@ class UnmatchedPool:
 
             def make_unmatched(
                     trade_id: int,
-                    quantity: Decimal,
+                    remaining_quantity: Decimal,
                     context: Cursor
             ) -> SplitTrade[Trade]:
                 trade = Trade.load(context, trade_id)
                 assert trade is not None
-                return SplitTrade(quantity, trade)
+                return SplitTrade(remaining_quantity, trade)
 
             return tuple(
-                make_unmatched(trade_id, quantity, context)
-                for trade_id, quantity in context.fetchall()
+                make_unmatched(trade_id, remaining_quantity, context)
+                for trade_id, remaining_quantity in context.fetchall()
             )
 
         def pool(self, context: Cursor) -> Sequence[SplitTrade[Trade]]:
