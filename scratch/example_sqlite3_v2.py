@@ -8,7 +8,6 @@ import sqlite3
 from sqlite3 import Cursor
 from typing import Generator
 
-from jetblack_pnl.core import TradingPnl, IMatchedPool, IUnmatchedPool
 from jetblack_pnl.impl.sqlite3_v2 import (
     create_tables,
     register_handlers,
