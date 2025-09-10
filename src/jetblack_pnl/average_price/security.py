@@ -2,10 +2,9 @@
 """
 
 from decimal import Decimal
-from typing import Protocol, runtime_checkable
+from typing import Protocol
 
 
-@runtime_checkable
 class ISecurity[KeyT](Protocol):
     """A security interface"""
 

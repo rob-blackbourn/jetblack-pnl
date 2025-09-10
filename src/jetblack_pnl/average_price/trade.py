@@ -2,11 +2,10 @@
 """
 
 from decimal import Decimal
-from typing import Protocol, runtime_checkable
+from typing import Protocol
 
 
-@runtime_checkable
-class ITrade[KeyT](Protocol):  # type: ignore
+class ITrade[KeyT](Protocol):
     """A trade interface"""
 
     @property
