@@ -25,13 +25,11 @@ def _reduce_position[TradeT: ITrade, SecurityT: ISecurity](
         sec: SecurityT,
 ) -> TradingPnl:
     if trd.quantity > 0:
-        closing_quantity = max(trd.quantity, -pnl.quantity)
+        closing_quantity = min(trd.quantity, -pnl.quantity)
     else:
         closing_quantity = max(trd.quantity, -pnl.quantity)
 
-    close_value = (
-        closing_quantity * sec.contract_size * trd.price
-    )
+    close_value = closing_quantity * sec.contract_size * trd.price
     open_cost = -(
         closing_quantity * sec.contract_size * (pnl.cost / pnl.quantity)
     )
